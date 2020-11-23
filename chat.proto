@@ -5,6 +5,11 @@ message Message{
     string body=1;
 }
 
+message Response {
+    string info = 1;
+    bytes fileChunk = 2;
+}
+
 service ChatService{
-    rpc SayHello(Message) returns (Message){}
+    rpc SayHello(Response) returns (Message){};
 }
