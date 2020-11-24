@@ -15,7 +15,7 @@ message Response {
     string info = 1;
     string name = 2;
     int32 elegido = 3;
-    int32 cantidad =4;
+    int64 cantidad =4;
     bytes fileChunk = 5;
     
 }
