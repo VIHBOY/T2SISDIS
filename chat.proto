@@ -7,7 +7,11 @@ message Message{
 
 message Response {
     string info = 1;
-    bytes fileChunk = 2;
+    string name = 2;
+    int32 elegido = 3;
+    int32 asignado =4;
+    bytes fileChunk = 5;
+    
 }
 
 service ChatService{
