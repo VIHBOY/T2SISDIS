@@ -5,11 +5,17 @@ message Message{
     string body=1;
 }
 
+message Propuesta{
+    int32 id1=1;
+    int32 id2=2;
+    int32 id3=3;
+}
+
 message Response {
     string info = 1;
     string name = 2;
     int32 elegido = 3;
-    int32 asignado =4;
+    int32 cantidad =4;
     bytes fileChunk = 5;
     
 }

@@ -83,6 +83,7 @@ func main() {
 			Info:      strconv.FormatUint(i, 10),
 			Name:      "Los_Miserables-Hugo_Victor.pdf",
 			Elegido:   1,
+			Cantidad:  totalPartsNum,
 			FileChunk: partBuffer,
 		}
 		var response *chat.Message
