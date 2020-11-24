@@ -40,6 +40,13 @@ func main() {
 	}
 
 	defer conn2.Close()
+	var conn3 *grpc.ClientConn
+	conn3, err3 := grpc.Dial(":9003", grpc.WithInsecure())
+	if err3 != nil {
+		log.Fatalf("uwu %s", err3)
+	}
+
+	defer conn3.Close()
 	for {
 
 	}

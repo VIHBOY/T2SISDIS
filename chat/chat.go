@@ -11,6 +11,12 @@ import (
 )
 
 type Server struct {
+	id1 int
+	id2 int
+	id3 int
+	w1  int
+	w2  int
+	w3  int
 }
 
 func (s *Server) SayHello(ctx context.Context, message *Response) (*Message, error) {
@@ -32,6 +38,7 @@ func (s *Server) SayHello(ctx context.Context, message *Response) (*Message, err
 	fmt.Println("Split to : ", propuesta.Id1)
 	return &Message{Body: "Holi"}, nil
 }
+
 func (s *Server) SayHello2(ctx context.Context, message *Message) (*Message, error) {
 	// write to disk
 
