@@ -3,6 +3,7 @@ package chat;
 
 message Message{
     string body=1;
+    int32 in=2;
 }
 
 message Propuesta{
@@ -23,6 +24,9 @@ message Response {
 service ChatService{
     rpc SayHello(Response) returns (Message){};
     rpc SayHello2(Message) returns (Message){};
+    rpc PedirConfirmacion(Message) returns (Message){};
+    rpc GenerarPropuesta(Message) returns (Propuesta){};
 
+    
 
 }

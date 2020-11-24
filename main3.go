@@ -25,28 +25,7 @@ func con() {
 
 func main() {
 	go con()
-	var conn *grpc.ClientConn
-	conn, err := grpc.Dial(":9000", grpc.WithInsecure())
-	if err != nil {
-		log.Fatalf("uwu %s", err)
-	}
 
-	defer conn.Close()
-
-	var conn2 *grpc.ClientConn
-	conn2, err2 := grpc.Dial(":9001", grpc.WithInsecure())
-	if err2 != nil {
-		log.Fatalf("uwu %s", err2)
-	}
-
-	defer conn2.Close()
-	var conn3 *grpc.ClientConn
-	conn3, err3 := grpc.Dial(":9003", grpc.WithInsecure())
-	if err3 != nil {
-		log.Fatalf("uwu %s", err3)
-	}
-
-	defer conn3.Close()
 	for {
 
 	}

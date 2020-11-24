@@ -3,11 +3,13 @@ package chat
 import (
 	"fmt"
 	"io/ioutil"
+	"log"
 	"math/rand"
 	"os"
 	"time"
 
 	"golang.org/x/net/context"
+	grpc "google.golang.org/grpc"
 )
 
 type Server struct {
@@ -33,19 +35,17 @@ func (s *Server) SayHello(ctx context.Context, message *Response) (*Message, err
 	ioutil.WriteFile(fileName, message.FileChunk, os.ModeAppend)
 
 	fmt.Println("Split to : ", fileName)
-	fmt.Println("Total : ", message.Cantidad)
-	propuesta, _ := GenerarPropuesta(message.Cantidad)
-	fmt.Println("Split to : ", propuesta.Id1)
-	return &Message{Body: "Holi"}, nil
+	return &Message{Body: ""}, nil
 }
 
 func (s *Server) SayHello2(ctx context.Context, message *Message) (*Message, error) {
 	// write to disk
+	fmt.Println("Confirmas?")
 
-	return &Message{Body: "Holi"}, nil
+	return &Message{In: 1}, nil
 }
-func GenerarPropuesta(c uint64) (*Propuesta, error) {
-	cantidad := int(c)
+func (s *Server) GenerarPropuesta(ctx context.Context, message *Message) (*Propuesta, error) {
+	cantidad := int(message.In)
 	var propuesta Propuesta
 
 	for i := 0; i < cantidad; i++ {
@@ -64,4 +64,121 @@ func GenerarPropuesta(c uint64) (*Propuesta, error) {
 	}
 
 	return &propuesta, nil
+}
+func (s *Server) PedirConfirmacion(ctx context.Context, message *Message) (*Message, error) {
+	count := 0
+	ganador := int(message.In)
+	var conn *grpc.ClientConn
+	conn, err := grpc.Dial(":9000", grpc.WithInsecure())
+	if err != nil {
+		log.Fatalf("uwu %s", err)
+	}
+	c := NewChatServiceClient(conn)
+
+	defer conn.Close()
+
+	var conn2 *grpc.ClientConn
+	conn2, err2 := grpc.Dial(":9001", grpc.WithInsecure())
+	if err2 != nil {
+		log.Fatalf("uwu %s", err2)
+	}
+	c2 := NewChatServiceClient(conn2)
+	defer conn2.Close()
+
+	var conn3 *grpc.ClientConn
+	conn3, err3 := grpc.Dial(":9002", grpc.WithInsecure())
+	if err3 != nil {
+		log.Fatalf("uwu %s", err3)
+	}
+	c3 := NewChatServiceClient(conn3)
+	defer conn3.Close()
+
+	var responde *Message
+	message2 := Message{
+		Body: "u2u",
+	}
+	if ganador == 1 {
+		responde, _ = c2.SayHello2(context.Background(), &message2)
+		if responde.In == 1 {
+			count++
+		}
+		responde, _ = c3.SayHello2(context.Background(), &message2)
+		if responde.In == 1 {
+			count++
+		}
+
+	}
+	if ganador == 2 {
+		responde, _ = c.SayHello2(context.Background(), &message2)
+		if responde.In == 1 {
+			count++
+		}
+		responde, _ = c3.SayHello2(context.Background(), &message2)
+		if responde.In == 1 {
+			count++
+		}
+
+	}
+	if ganador == 3 {
+		responde, _ = c.SayHello2(context.Background(), &message2)
+		if responde.In == 1 {
+			count++
+		}
+		responde, _ = c2.SayHello2(context.Background(), &message2)
+		if responde.In == 1 {
+			count++
+		}
+
+	}
+	if count == 2 {
+		return &Message{In: 1}, nil
+	} else {
+		return &Message{In: 0}, nil
+
+	}
+}
+
+func (s *Server) Repartir(ctx context.Context, message *Message) (*Message, error) {
+	ganador := int(message.In)
+	var conn *grpc.ClientConn
+	conn, err := grpc.Dial(":9000", grpc.WithInsecure())
+	if err != nil {
+		log.Fatalf("uwu %s", err)
+	}
+	c := NewChatServiceClient(conn)
+
+	defer conn.Close()
+
+	var conn2 *grpc.ClientConn
+	conn2, err2 := grpc.Dial(":9001", grpc.WithInsecure())
+	if err2 != nil {
+		log.Fatalf("uwu %s", err2)
+	}
+	c2 := NewChatServiceClient(conn2)
+	defer conn2.Close()
+
+	var conn3 *grpc.ClientConn
+	conn3, err3 := grpc.Dial(":9002", grpc.WithInsecure())
+	if err3 != nil {
+		log.Fatalf("uwu %s", err3)
+	}
+	c3 := NewChatServiceClient(conn3)
+	defer conn3.Close()
+
+	var responde *Message
+	message2 := Message{
+		Body: "u2u",
+	}
+	if ganador == 1 {
+		responde, _ = c.SayHello2(context.Background(), &message2)
+	}
+	if ganador == 2 {
+		responde, _ = c2.SayHello2(context.Background(), &message2)
+	}
+	if ganador == 3 {
+		responde, _ = c3.SayHello2(context.Background(), &message2)
+	}
+	fmt.Println("Uwu : ", responde)
+
+	return &Message{Body: "Holi"}, nil
 }
