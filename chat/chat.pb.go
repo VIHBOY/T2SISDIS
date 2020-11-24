@@ -147,7 +147,7 @@ type Response struct {
 	Info      string `protobuf:"bytes,1,opt,name=info,proto3" json:"info,omitempty"`
 	Name      string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	Elegido   int32  `protobuf:"varint,3,opt,name=elegido,proto3" json:"elegido,omitempty"`
-	Cantidad  int64  `protobuf:"varint,4,opt,name=cantidad,proto3" json:"cantidad,omitempty"`
+	Cantidad  uint64 `protobuf:"varint,4,opt,name=cantidad,proto3" json:"cantidad,omitempty"`
 	FileChunk []byte `protobuf:"bytes,5,opt,name=fileChunk,proto3" json:"fileChunk,omitempty"`
 }
 
@@ -204,7 +204,7 @@ func (x *Response) GetElegido() int32 {
 	return 0
 }
 
-func (x *Response) GetCantidad() int64 {
+func (x *Response) GetCantidad() uint64 {
 	if x != nil {
 		return x.Cantidad
 	}
@@ -234,14 +234,16 @@ var file_chat_proto_rawDesc = []byte{
 	0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x12, 0x18, 0x0a, 0x07, 0x65, 0x6c, 0x65,
 	0x67, 0x69, 0x64, 0x6f, 0x18, 0x03, 0x20, 0x01, 0x28, 0x05, 0x52, 0x07, 0x65, 0x6c, 0x65, 0x67,
 	0x69, 0x64, 0x6f, 0x12, 0x1a, 0x0a, 0x08, 0x63, 0x61, 0x6e, 0x74, 0x69, 0x64, 0x61, 0x64, 0x18,
-	0x04, 0x20, 0x01, 0x28, 0x03, 0x52, 0x08, 0x63, 0x61, 0x6e, 0x74, 0x69, 0x64, 0x61, 0x64, 0x12,
+	0x04, 0x20, 0x01, 0x28, 0x04, 0x52, 0x08, 0x63, 0x61, 0x6e, 0x74, 0x69, 0x64, 0x61, 0x64, 0x12,
 	0x1c, 0x0a, 0x09, 0x66, 0x69, 0x6c, 0x65, 0x43, 0x68, 0x75, 0x6e, 0x6b, 0x18, 0x05, 0x20, 0x01,
-	0x28, 0x0c, 0x52, 0x09, 0x66, 0x69, 0x6c, 0x65, 0x43, 0x68, 0x75, 0x6e, 0x6b, 0x32, 0x3a, 0x0a,
+	0x28, 0x0c, 0x52, 0x09, 0x66, 0x69, 0x6c, 0x65, 0x43, 0x68, 0x75, 0x6e, 0x6b, 0x32, 0x67, 0x0a,
 	0x0b, 0x43, 0x68, 0x61, 0x74, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x2b, 0x0a, 0x08,
 	0x53, 0x61, 0x79, 0x48, 0x65, 0x6c, 0x6c, 0x6f, 0x12, 0x0e, 0x2e, 0x63, 0x68, 0x61, 0x74, 0x2e,
 	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x1a, 0x0d, 0x2e, 0x63, 0x68, 0x61, 0x74, 0x2e,
-	0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x22, 0x00, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f,
-	0x33,
+	0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x22, 0x00, 0x12, 0x2b, 0x0a, 0x09, 0x53, 0x61, 0x79,
+	0x48, 0x65, 0x6c, 0x6c, 0x6f, 0x32, 0x12, 0x0d, 0x2e, 0x63, 0x68, 0x61, 0x74, 0x2e, 0x4d, 0x65,
+	0x73, 0x73, 0x61, 0x67, 0x65, 0x1a, 0x0d, 0x2e, 0x63, 0x68, 0x61, 0x74, 0x2e, 0x4d, 0x65, 0x73,
+	0x73, 0x61, 0x67, 0x65, 0x22, 0x00, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -264,9 +266,11 @@ var file_chat_proto_goTypes = []interface{}{
 }
 var file_chat_proto_depIdxs = []int32{
 	2, // 0: chat.ChatService.SayHello:input_type -> chat.Response
-	0, // 1: chat.ChatService.SayHello:output_type -> chat.Message
-	1, // [1:2] is the sub-list for method output_type
-	0, // [0:1] is the sub-list for method input_type
+	0, // 1: chat.ChatService.SayHello2:input_type -> chat.Message
+	0, // 2: chat.ChatService.SayHello:output_type -> chat.Message
+	0, // 3: chat.ChatService.SayHello2:output_type -> chat.Message
+	2, // [2:4] is the sub-list for method output_type
+	0, // [0:2] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
@@ -348,6 +352,7 @@ const _ = grpc.SupportPackageIsVersion6
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type ChatServiceClient interface {
 	SayHello(ctx context.Context, in *Response, opts ...grpc.CallOption) (*Message, error)
+	SayHello2(ctx context.Context, in *Message, opts ...grpc.CallOption) (*Message, error)
 }
 
 type chatServiceClient struct {
@@ -367,9 +372,19 @@ func (c *chatServiceClient) SayHello(ctx context.Context, in *Response, opts ...
 	return out, nil
 }
 
+func (c *chatServiceClient) SayHello2(ctx context.Context, in *Message, opts ...grpc.CallOption) (*Message, error) {
+	out := new(Message)
+	err := c.cc.Invoke(ctx, "/chat.ChatService/SayHello2", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ChatServiceServer is the server API for ChatService service.
 type ChatServiceServer interface {
 	SayHello(context.Context, *Response) (*Message, error)
+	SayHello2(context.Context, *Message) (*Message, error)
 }
 
 // UnimplementedChatServiceServer can be embedded to have forward compatible implementations.
@@ -378,6 +393,9 @@ type UnimplementedChatServiceServer struct {
 
 func (*UnimplementedChatServiceServer) SayHello(context.Context, *Response) (*Message, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SayHello not implemented")
+}
+func (*UnimplementedChatServiceServer) SayHello2(context.Context, *Message) (*Message, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SayHello2 not implemented")
 }
 
 func RegisterChatServiceServer(s *grpc.Server, srv ChatServiceServer) {
@@ -402,6 +420,24 @@ func _ChatService_SayHello_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ChatService_SayHello2_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Message)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatServiceServer).SayHello2(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/chat.ChatService/SayHello2",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatServiceServer).SayHello2(ctx, req.(*Message))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _ChatService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "chat.ChatService",
 	HandlerType: (*ChatServiceServer)(nil),
@@ -409,6 +445,10 @@ var _ChatService_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SayHello",
 			Handler:    _ChatService_SayHello_Handler,
+		},
+		{
+			MethodName: "SayHello2",
+			Handler:    _ChatService_SayHello2_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

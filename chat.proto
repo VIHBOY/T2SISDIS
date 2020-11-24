@@ -15,11 +15,14 @@ message Response {
     string info = 1;
     string name = 2;
     int32 elegido = 3;
-    int64 cantidad =4;
+    uint64 cantidad =4;
     bytes fileChunk = 5;
     
 }
 
 service ChatService{
     rpc SayHello(Response) returns (Message){};
+    rpc SayHello2(Message) returns (Message){};
+
+
 }
