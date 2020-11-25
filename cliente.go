@@ -1,8 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net"
+	"os"
 
 	"github.com/VIHBOY/T2SISDIS/chat"
 	"google.golang.org/grpc"
@@ -24,6 +26,13 @@ func con() {
 }
 
 func main() {
+	fileName := "Log.txt"
+	_, err4 := os.Create(fileName)
+
+	if err4 != nil {
+		fmt.Println(err4)
+		os.Exit(1)
+	}
 	go con()
 	var conn *grpc.ClientConn
 	conn, err := grpc.Dial(":9000", grpc.WithInsecure())

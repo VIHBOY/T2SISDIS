@@ -10,6 +10,11 @@ message Propuesta{
     int32 id1=1;
     int32 id2=2;
     int32 id3=3;
+    repeated int32 l1=4;
+    repeated int32 l2=5;
+    repeated int32 l3=6;
+    repeated int32 pos=7;
+    string titulo=8; 
 }
 
 message Response {
@@ -20,13 +25,15 @@ message Response {
     bytes fileChunk = 5;
     
 }
+message Empty{}
 
 service ChatService{
     rpc SayHello(Response) returns (Message){};
     rpc SayHello2(Message) returns (Message){};
     rpc PedirConfirmacion(Message) returns (Message){};
     rpc GenerarPropuesta(Message) returns (Propuesta){};
-
+    rpc Repartir(Propuesta) returns (Message){};
+    rpc SayHello3(Response) returns (Message){};
     
 
 }

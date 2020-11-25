@@ -110,7 +110,10 @@ func main() {
 
 	}
 
-	fmt.Println(propuesta)
+	fmt.Println(propuesta.L1)
+	fmt.Println(propuesta.L2)
+	fmt.Println(propuesta.L3)
+	fmt.Println(propuesta.Pos)
 
 	Aviso := chat.Message{
 		In: int32(chosendn),
@@ -152,14 +155,23 @@ func main() {
 		case 1:
 			response, _ = c.SayHello(context.Background(), &message)
 			log.Printf("Aca %s", response.Body)
-
 		case 2:
 			response, _ = c2.SayHello(context.Background(), &message)
 		case 3:
 			response, _ = c3.SayHello(context.Background(), &message)
 		}
 	}
+	var response2 *chat.Message
 
+	switch chosendn {
+	case 1:
+		response2, _ = c.Repartir(context.Background(), propuesta)
+		log.Printf("Aca %s", response2.Body)
+	case 2:
+		response2, _ = c2.Repartir(context.Background(), propuesta)
+	case 3:
+		response2, _ = c3.Repartir(context.Background(), propuesta)
+	}
 	for {
 
 	}

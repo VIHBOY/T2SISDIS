@@ -6,6 +6,7 @@ import (
 	"log"
 	"math/rand"
 	"os"
+	sync "sync"
 	"time"
 
 	"golang.org/x/net/context"
@@ -13,17 +14,20 @@ import (
 )
 
 type Server struct {
-	id1 int
-	id2 int
-	id3 int
-	w1  int
-	w2  int
-	w3  int
+	mu          sync.Mutex
+	id1         int
+	id2         int
+	id3         int
+	w1          int
+	w2          int
+	w3          int
+	ListaChunks []Response
 }
 
-func (s *Server) SayHello(ctx context.Context, message *Response) (*Message, error) {
+func (s *Server) SayHello3(ctx context.Context, message *Response) (*Message, error) {
+
 	// write to disk
-	fileName := "lmhv_" + message.Info
+	fileName := "lmhv_uwu_" + message.Info
 	_, err := os.Create(fileName)
 
 	if err != nil {
@@ -35,6 +39,23 @@ func (s *Server) SayHello(ctx context.Context, message *Response) (*Message, err
 	ioutil.WriteFile(fileName, message.FileChunk, os.ModeAppend)
 
 	fmt.Println("Split to : ", fileName)
+
+	return &Message{Body: ""}, nil
+}
+func (s *Server) SayHello(ctx context.Context, message *Response) (*Message, error) {
+
+	// write to disk
+
+	s.ListaChunks = append(s.ListaChunks, Response{
+		Info:      message.GetInfo(),
+		Name:      message.GetName(),
+		Elegido:   message.GetElegido(),
+		Cantidad:  message.GetCantidad(),
+		FileChunk: message.GetFileChunk(),
+	})
+
+	// write/save buffer to disk
+
 	return &Message{Body: ""}, nil
 }
 
@@ -56,10 +77,18 @@ func (s *Server) GenerarPropuesta(ctx context.Context, message *Message) (*Propu
 		switch chosendn {
 		case 1:
 			propuesta.Id1++
+			propuesta.L1 = append(propuesta.L1, int32(i))
+			propuesta.Pos = append(propuesta.Pos, 1)
 		case 2:
 			propuesta.Id2++
+			propuesta.L2 = append(propuesta.L2, int32(i))
+			propuesta.Pos = append(propuesta.Pos, 2)
+
 		case 3:
 			propuesta.Id3++
+			propuesta.L3 = append(propuesta.L3, int32(i))
+			propuesta.Pos = append(propuesta.Pos, 3)
+
 		}
 	}
 
@@ -138,8 +167,8 @@ func (s *Server) PedirConfirmacion(ctx context.Context, message *Message) (*Mess
 	}
 }
 
-func (s *Server) Repartir(ctx context.Context, message *Message) (*Message, error) {
-	ganador := int(message.In)
+func (s *Server) Repartir(ctx context.Context, propuesta *Propuesta) (*Message, error) {
+
 	var conn *grpc.ClientConn
 	conn, err := grpc.Dial(":9000", grpc.WithInsecure())
 	if err != nil {
@@ -155,6 +184,7 @@ func (s *Server) Repartir(ctx context.Context, message *Message) (*Message, erro
 		log.Fatalf("uwu %s", err2)
 	}
 	c2 := NewChatServiceClient(conn2)
+
 	defer conn2.Close()
 
 	var conn3 *grpc.ClientConn
@@ -163,22 +193,24 @@ func (s *Server) Repartir(ctx context.Context, message *Message) (*Message, erro
 		log.Fatalf("uwu %s", err3)
 	}
 	c3 := NewChatServiceClient(conn3)
+
 	defer conn3.Close()
+	s.mu.Lock()
 
-	var responde *Message
-	message2 := Message{
-		Body: "u2u",
-	}
-	if ganador == 1 {
-		responde, _ = c.SayHello2(context.Background(), &message2)
-	}
-	if ganador == 2 {
-		responde, _ = c2.SayHello2(context.Background(), &message2)
-	}
-	if ganador == 3 {
-		responde, _ = c3.SayHello2(context.Background(), &message2)
-	}
-	fmt.Println("Uwu : ", responde)
+	for _, i := range propuesta.L1 {
+		c.SayHello3(context.Background(), &s.ListaChunks[i])
 
+	}
+	for _, i := range propuesta.L2 {
+		c2.SayHello3(context.Background(), &s.ListaChunks[i])
+
+	}
+	for _, i := range propuesta.L3 {
+		c3.SayHello3(context.Background(), &s.ListaChunks[i])
+
+	}
+	s.ListaChunks = make([]Response, 0)
+
+	s.mu.Unlock()
 	return &Message{Body: "Holi"}, nil
 }
