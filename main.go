@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"context"
 	"fmt"
 	"log"
@@ -9,6 +10,7 @@ import (
 	"net"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/VIHBOY/T2SISDIS/chat"
@@ -30,35 +32,7 @@ func con() {
 	}
 }
 
-func main() {
-	go con()
-
-	var conn *grpc.ClientConn
-	conn, err := grpc.Dial(":9000", grpc.WithInsecure())
-	if err != nil {
-		log.Fatalf("uwu %s", err)
-	}
-	c := chat.NewChatServiceClient(conn)
-
-	defer conn.Close()
-
-	var conn2 *grpc.ClientConn
-	conn2, err2 := grpc.Dial(":9001", grpc.WithInsecure())
-	if err2 != nil {
-		log.Fatalf("uwu %s", err2)
-	}
-	c2 := chat.NewChatServiceClient(conn2)
-
-	defer conn2.Close()
-
-	var conn3 *grpc.ClientConn
-	conn3, err3 := grpc.Dial(":9002", grpc.WithInsecure())
-	if err3 != nil {
-		log.Fatalf("uwu %s", err3)
-	}
-	c3 := chat.NewChatServiceClient(conn3)
-
-	defer conn3.Close()
+func do(text string, c chat.ChatServiceClient, c2 chat.ChatServiceClient, c3 chat.ChatServiceClient) {
 
 	/*var conn3 *grpc.ClientConn
 	conn3, err3 := grpc.Dial(":9003", grpc.WithInsecure())
@@ -69,8 +43,8 @@ func main() {
 
 	defer conn3.Close()*/
 
-	fileToBeChunked := "./Laboratorio_2_Sistemas_Distribuidos.pdf"
-	titulo := "Laboratorio_2_Sistemas_Distribuidos"
+	fileToBeChunked := "./" + text + ".pdf"
+	titulo := text
 	file, err := os.Open(fileToBeChunked)
 
 	rand.Seed(time.Now().UnixNano())
@@ -109,10 +83,6 @@ func main() {
 		propuesta, _ = c3.GenerarPropuesta(context.Background(), &Message_totalchunks)
 	}
 	propuesta.Titulo = titulo
-	fmt.Println(propuesta.L1)
-	fmt.Println(propuesta.L2)
-	fmt.Println(propuesta.L3)
-	fmt.Println(propuesta.Pos)
 
 	Aviso := chat.Message{
 		In: int32(chosendn),
@@ -141,7 +111,7 @@ func main() {
 
 	}
 
-	fmt.Printf("Splitting to %d pieces.\n", totalPartsNum)
+	fmt.Printf("Dividir en  %d Chunks.\n", totalPartsNum)
 
 	for i := uint64(0); i < totalPartsNum; i++ {
 
@@ -176,7 +146,47 @@ func main() {
 	case 3:
 		c3.Repartir(context.Background(), propuesta)
 	}
-	for {
+}
 
+func main() {
+	go con()
+	var conn *grpc.ClientConn
+	conn, err := grpc.Dial(":9000", grpc.WithInsecure())
+	if err != nil {
+		log.Fatalf("uwu %s", err)
 	}
+	c := chat.NewChatServiceClient(conn)
+	fmt.Printf("%T\n", c)
+
+	defer conn.Close()
+
+	var conn2 *grpc.ClientConn
+	conn2, err2 := grpc.Dial(":9001", grpc.WithInsecure())
+	if err2 != nil {
+		log.Fatalf("uwu %s", err2)
+	}
+	c2 := chat.NewChatServiceClient(conn2)
+
+	defer conn2.Close()
+
+	var conn3 *grpc.ClientConn
+	conn3, err3 := grpc.Dial(":9002", grpc.WithInsecure())
+	if err3 != nil {
+		log.Fatalf("uwu %s", err3)
+	}
+	c3 := chat.NewChatServiceClient(conn3)
+
+	defer conn3.Close()
+	for {
+		fmt.Println("-------------------------------------------")
+		fmt.Println("Menú")
+		reader := bufio.NewReader(os.Stdin)
+		fmt.Println("Ingrese Archivo a subir")
+		text, _ := reader.ReadString('\n')
+		// convert CRLF to LF
+		text = strings.Replace(text, "\n", "", -1)
+		fmt.Println(text)
+		do(text, c, c2, c3)
+	}
+
 }

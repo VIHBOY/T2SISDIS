@@ -69,7 +69,18 @@ func (s *Server) SayHello2(ctx context.Context, message *Message) (*Message, err
 func (s *Server) GenerarPropuesta(ctx context.Context, message *Message) (*Propuesta, error) {
 	cantidad := int(message.In)
 	var propuesta Propuesta
-
+	if cantidad == 3 {
+		propuesta.Id1++
+		propuesta.L1 = append(propuesta.L1, int32(0))
+		propuesta.Pos = append(propuesta.Pos, 1)
+		propuesta.Id2++
+		propuesta.L2 = append(propuesta.L2, int32(1))
+		propuesta.Pos = append(propuesta.Pos, 2)
+		propuesta.Id3++
+		propuesta.L3 = append(propuesta.L3, int32(2))
+		propuesta.Pos = append(propuesta.Pos, 3)
+		return &propuesta, nil
+	}
 	for i := 0; i < cantidad; i++ {
 		rand.Seed(time.Now().UnixNano())
 		min := 1
