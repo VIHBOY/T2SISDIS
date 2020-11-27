@@ -8,6 +8,7 @@ import (
 	"math/rand"
 	"os"
 	"strconv"
+	"strings"
 	sync "sync"
 	"time"
 
@@ -316,4 +317,55 @@ func (s *Server) HelperVerTitulos(ctx context.Context, message *Message) (*Titul
 		log.Fatal(err)
 	}
 	return &Titulos, nil
+}
+func (s *Server) ObtenerUbicaciones(ctx context.Context, message *Message) (*Titulos, error) {
+	titulo_a_buscar := message.Body
+	var Titulos Titulos
+	file, err := os.Open("Log.txt")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+	var lines []string
+	var i2 int
+	var linea int
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		lines = append(lines, scanner.Text())
+	}
+	for c, b := range lines {
+		a := strings.Split(b, " ")
+		if a[0] == titulo_a_buscar {
+			linea = c
+			i2, _ = strconv.Atoi(a[1])
+
+		}
+	}
+
+	for i := 0; i < i2; i++ {
+		Titulos.Titulos = append(Titulos.Titulos, lines[linea+i+1])
+	}
+	if err := scanner.Err(); err != nil {
+		log.Fatal(err)
+	}
+	return &Titulos, nil
+
+}
+func (s *Server) BuscarChunks(ctx context.Context, ti *Titulos) (*Message, error) {
+	for _, b := range ti.Titulos {
+		a := strings.Split(b, " ")
+		fmt.Println(a[0])
+		i, _ := strconv.Atoi(a[1])
+		switch i {
+		case 1:
+			fmt.Println("1")
+		case 2:
+			fmt.Println("2")
+		case 3:
+			fmt.Println("3")
+		}
+
+	}
+	return &Message{Body: ""}, nil
+
 }

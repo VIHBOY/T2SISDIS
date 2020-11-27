@@ -42,4 +42,7 @@ service ChatService{
     rpc HelperAgregarTitulo(Message) returns(Message){};
     rpc VerTitulos(Message) returns(Titulos){};
     rpc HelperVerTitulos(Message) returns(Titulos){};
+    rpc ObtenerUbicaciones(Message) returns(Titulos){};
+    rpc BuscarChunks(Titulos) returns(Message){};
+
 }

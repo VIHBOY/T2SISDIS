@@ -46,15 +46,20 @@ func do2(text string, c chat.ChatServiceClient, c2 chat.ChatServiceClient, c3 ch
 	fmt.Println("Ingrese Archivo a bajar")
 	text2, _ := reader.ReadString('\n')
 	// convert CRLF to LF
-	text = strings.Replace(text, "\n", "", -1)
-	fmt.Println(text)
+	text3 := strings.Replace(text, "\n", "", -1)
+	fmt.Println(text3)
 	var conn *grpc.ClientConn
 	conn, err := grpc.Dial(":9000", grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("uwu %s", err)
 	}
 	fmt.Println(text2)
-
+	Agregar2 := chat.Message{
+		Body: text3,
+	}
+	Ti, _ := c.ObtenerUbicaciones(context.Background(), &Agregar2)
+	fmt.Println(Ti)
+	c.BuscarChunks(context.Background(), Ti)
 	defer conn.Close()
 
 }

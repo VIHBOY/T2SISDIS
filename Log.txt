@@ -1,6 +1,6 @@
 test 5
-test_0 2
-test_1 3
-test_2 2
-test_3 2
-test_4 3
+test_0 1
+test_1 1
+test_2 3
+test_3 1
+test_4 2
