@@ -30,8 +30,34 @@ func con() {
 	if err := grpcServer.Serve(lis); err != nil {
 		log.Fatalf("a %v", err)
 	}
-}
 
+}
+func do2(text string, c chat.ChatServiceClient, c2 chat.ChatServiceClient, c3 chat.ChatServiceClient) {
+	Agregar := chat.Message{
+		Body: "text",
+	}
+	Titulos, _ := c.VerTitulos(context.Background(), &Agregar)
+	fmt.Printf("Titulos Disponibles\n")
+	for _, a := range Titulos.Titulos {
+		fmt.Printf("Titulos: %s\n", a)
+	}
+	fmt.Println("Ingrese Titulo")
+	reader := bufio.NewReader(os.Stdin)
+	fmt.Println("Ingrese Archivo a bajar")
+	text2, _ := reader.ReadString('\n')
+	// convert CRLF to LF
+	text = strings.Replace(text, "\n", "", -1)
+	fmt.Println(text)
+	var conn *grpc.ClientConn
+	conn, err := grpc.Dial(":9000", grpc.WithInsecure())
+	if err != nil {
+		log.Fatalf("uwu %s", err)
+	}
+	fmt.Println(text2)
+
+	defer conn.Close()
+
+}
 func do(text string, c chat.ChatServiceClient, c2 chat.ChatServiceClient, c3 chat.ChatServiceClient) {
 
 	/*var conn3 *grpc.ClientConn
@@ -137,14 +163,29 @@ func do(text string, c chat.ChatServiceClient, c2 chat.ChatServiceClient, c3 cha
 			c3.SayHello(context.Background(), &message)
 		}
 	}
-
+	Agregar := chat.Message{
+		Body: text,
+	}
+	var Titulos *chat.Titulos
 	switch chosendn {
 	case 1:
 		c.Repartir(context.Background(), propuesta)
+		c.AgregarTitulo(context.Background(), &Agregar)
+		Titulos, _ = c.VerTitulos(context.Background(), &Agregar)
 	case 2:
 		c2.Repartir(context.Background(), propuesta)
+		c2.AgregarTitulo(context.Background(), &Agregar)
+		Titulos, _ = c2.VerTitulos(context.Background(), &Agregar)
+
 	case 3:
 		c3.Repartir(context.Background(), propuesta)
+		c3.AgregarTitulo(context.Background(), &Agregar)
+		Titulos, _ = c3.VerTitulos(context.Background(), &Agregar)
+	}
+	fmt.Println(Titulos)
+	fmt.Printf("Titulos Disponibles\n")
+	for _, a := range Titulos.Titulos {
+		fmt.Printf("Titulos: %s\n", a)
 	}
 }
 
@@ -156,7 +197,6 @@ func main() {
 		log.Fatalf("uwu %s", err)
 	}
 	c := chat.NewChatServiceClient(conn)
-	fmt.Printf("%T\n", c)
 
 	defer conn.Close()
 
@@ -186,6 +226,7 @@ func main() {
 		// convert CRLF to LF
 		text = strings.Replace(text, "\n", "", -1)
 		fmt.Println(text)
+		do(text, c, c2, c3)
 		do(text, c, c2, c3)
 	}
 

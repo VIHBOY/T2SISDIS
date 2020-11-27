@@ -33,6 +33,13 @@ func main() {
 		fmt.Println(err4)
 		os.Exit(1)
 	}
+	fileName2 := "Titulos.txt"
+	_, err5 := os.Create(fileName2)
+
+	if err5 != nil {
+		fmt.Println(err5)
+		os.Exit(1)
+	}
 	go con()
 	var conn *grpc.ClientConn
 	conn, err := grpc.Dial(":9000", grpc.WithInsecure())

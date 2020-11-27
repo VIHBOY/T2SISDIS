@@ -16,7 +16,9 @@ message Propuesta{
     repeated int32 pos=7;
     string titulo=8; 
 }
-
+message Titulos{
+    repeated string titulos=1;
+}
 message Response {
     string info = 1;
     string name = 2;
@@ -36,5 +38,8 @@ service ChatService{
     rpc SayHello3(Response) returns (Message){};
     rpc EscribirPropuesta(Propuesta) returns(Message){};
     rpc HelperEscribirPropuesta(Propuesta) returns(Message){};
-
+    rpc AgregarTitulo(Message) returns(Message){};
+    rpc HelperAgregarTitulo(Message) returns(Message){};
+    rpc VerTitulos(Message) returns(Titulos){};
+    rpc HelperVerTitulos(Message) returns(Titulos){};
 }

@@ -1,6 +1,7 @@
 package chat
 
 import (
+	"bufio"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -260,4 +261,59 @@ func (s *Server) HelperEscribirPropuesta(ctx context.Context, propuesta *Propues
 		}
 	}
 	return &Message{Body: ""}, nil
+}
+func (s *Server) AgregarTitulo(ctx context.Context, message *Message) (*Message, error) {
+
+	var conn3 *grpc.ClientConn
+	conn3, err3 := grpc.Dial(":9004", grpc.WithInsecure())
+	if err3 != nil {
+		log.Fatalf("uwu %s", err3)
+	}
+	c4 := NewChatServiceClient(conn3)
+	defer conn3.Close()
+	c4.HelperAgregarTitulo(context.Background(), message)
+	return &Message{Body: ""}, nil
+}
+func (s *Server) HelperAgregarTitulo(ctx context.Context, message *Message) (*Message, error) {
+	f, err := os.OpenFile("Titulos.txt",
+		os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		log.Println(err)
+	}
+	defer f.Close()
+	if _, err := f.WriteString(message.Body + "\n"); err != nil {
+		log.Println(err)
+	}
+	return &Message{Body: ""}, nil
+}
+func (s *Server) VerTitulos(ctx context.Context, message *Message) (*Titulos, error) {
+
+	var conn3 *grpc.ClientConn
+	conn3, err3 := grpc.Dial(":9004", grpc.WithInsecure())
+	if err3 != nil {
+		log.Fatalf("uwu %s", err3)
+	}
+	c4 := NewChatServiceClient(conn3)
+	defer conn3.Close()
+	Titulos, _ := c4.HelperVerTitulos(context.Background(), message)
+	return Titulos, nil
+}
+func (s *Server) HelperVerTitulos(ctx context.Context, message *Message) (*Titulos, error) {
+	var Titulos Titulos
+	file, err := os.Open("Titulos.txt")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		fmt.Println(scanner.Text())
+		Titulos.Titulos = append(Titulos.Titulos, scanner.Text())
+	}
+
+	if err := scanner.Err(); err != nil {
+		log.Fatal(err)
+	}
+	return &Titulos, nil
 }
