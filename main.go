@@ -69,8 +69,8 @@ func main() {
 
 	defer conn3.Close()*/
 
-	fileToBeChunked := "./Los_Miserables-Hugo_Victor.pdf"
-
+	fileToBeChunked := "./Laboratorio_2_Sistemas_Distribuidos.pdf"
+	titulo := "Laboratorio_2_Sistemas_Distribuidos"
 	file, err := os.Open(fileToBeChunked)
 
 	rand.Seed(time.Now().UnixNano())
@@ -107,9 +107,8 @@ func main() {
 		propuesta, _ = c2.GenerarPropuesta(context.Background(), &Message_totalchunks)
 	case 3:
 		propuesta, _ = c3.GenerarPropuesta(context.Background(), &Message_totalchunks)
-
 	}
-
+	propuesta.Titulo = titulo
 	fmt.Println(propuesta.L1)
 	fmt.Println(propuesta.L2)
 	fmt.Println(propuesta.L3)
@@ -130,6 +129,15 @@ func main() {
 	}
 	if respuesta.In == 1 {
 		fmt.Println("Propuesta Aceptada")
+	}
+
+	switch chosendn {
+	case 1:
+		respuesta, _ = c.EscribirPropuesta(context.Background(), propuesta)
+	case 2:
+		respuesta, _ = c2.EscribirPropuesta(context.Background(), propuesta)
+	case 3:
+		respuesta, _ = c3.EscribirPropuesta(context.Background(), propuesta)
 
 	}
 
@@ -144,33 +152,29 @@ func main() {
 
 		message := chat.Response{
 			Info:      strconv.FormatUint(i, 10),
-			Name:      "Los_Miserables-Hugo_Victor.pdf",
+			Name:      titulo,
 			Elegido:   1,
 			Cantidad:  totalPartsNum,
 			FileChunk: partBuffer,
 		}
 
-		var response *chat.Message
 		switch chosendn {
 		case 1:
-			response, _ = c.SayHello(context.Background(), &message)
-			log.Printf("Aca %s", response.Body)
+			c.SayHello(context.Background(), &message)
 		case 2:
-			response, _ = c2.SayHello(context.Background(), &message)
+			c2.SayHello(context.Background(), &message)
 		case 3:
-			response, _ = c3.SayHello(context.Background(), &message)
+			c3.SayHello(context.Background(), &message)
 		}
 	}
-	var response2 *chat.Message
 
 	switch chosendn {
 	case 1:
-		response2, _ = c.Repartir(context.Background(), propuesta)
-		log.Printf("Aca %s", response2.Body)
+		c.Repartir(context.Background(), propuesta)
 	case 2:
-		response2, _ = c2.Repartir(context.Background(), propuesta)
+		c2.Repartir(context.Background(), propuesta)
 	case 3:
-		response2, _ = c3.Repartir(context.Background(), propuesta)
+		c3.Repartir(context.Background(), propuesta)
 	}
 	for {
 

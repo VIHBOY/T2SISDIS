@@ -1,0 +1,4 @@
+Laboratorio_2_Sistemas_Distribuidos 3
+Laboratorio_2_Sistemas_Distribuidos_0 127.0.0.2
+Laboratorio_2_Sistemas_Distribuidos_1 127.0.0.2
+Laboratorio_2_Sistemas_Distribuidos_2 127.0.0.2

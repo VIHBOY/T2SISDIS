@@ -6,6 +6,7 @@ import (
 	"log"
 	"math/rand"
 	"os"
+	"strconv"
 	sync "sync"
 	"time"
 
@@ -27,7 +28,7 @@ type Server struct {
 func (s *Server) SayHello3(ctx context.Context, message *Response) (*Message, error) {
 
 	// write to disk
-	fileName := "lmhv_uwu_" + message.Info
+	fileName := message.Name + "_" + message.Info
 	_, err := os.Create(fileName)
 
 	if err != nil {
@@ -38,7 +39,7 @@ func (s *Server) SayHello3(ctx context.Context, message *Response) (*Message, er
 	// write/save buffer to disk
 	ioutil.WriteFile(fileName, message.FileChunk, os.ModeAppend)
 
-	fmt.Println("Split to : ", fileName)
+	fmt.Println("Recibiste: ", fileName)
 
 	return &Message{Body: ""}, nil
 }
@@ -212,5 +213,40 @@ func (s *Server) Repartir(ctx context.Context, propuesta *Propuesta) (*Message, 
 	s.ListaChunks = make([]Response, 0)
 
 	s.mu.Unlock()
-	return &Message{Body: "Holi"}, nil
+	return &Message{Body: ""}, nil
+}
+func (s *Server) EscribirPropuesta(ctx context.Context, propuesta *Propuesta) (*Message, error) {
+
+	var conn *grpc.ClientConn
+	conn, err := grpc.Dial(":9004", grpc.WithInsecure())
+	if err != nil {
+		log.Fatalf("uwu %s", err)
+	}
+	c := NewChatServiceClient(conn)
+
+	defer conn.Close()
+
+	s.mu.Lock()
+	c.HelperEscribirPropuesta(context.Background(), propuesta)
+	s.mu.Unlock()
+	return &Message{Body: ""}, nil
+}
+func (s *Server) HelperEscribirPropuesta(ctx context.Context, propuesta *Propuesta) (*Message, error) {
+	f, err := os.OpenFile("Log.txt",
+		os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		log.Println(err)
+	}
+	defer f.Close()
+	totalchunks := len(propuesta.L1) + len(propuesta.L2) + len(propuesta.L3)
+	encabezado := propuesta.Titulo + " " + strconv.Itoa(totalchunks)
+	if _, err := f.WriteString(encabezado + "\n"); err != nil {
+		log.Println(err)
+	}
+	for i2, _ := range propuesta.Pos {
+		if _, err := f.WriteString(propuesta.Titulo + "_" + strconv.Itoa(i2) + " " + "127.0.0.2" + "\n"); err != nil {
+			log.Println(err)
+		}
+	}
+	return &Message{Body: ""}, nil
 }

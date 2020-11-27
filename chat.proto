@@ -34,6 +34,7 @@ service ChatService{
     rpc GenerarPropuesta(Message) returns (Propuesta){};
     rpc Repartir(Propuesta) returns (Message){};
     rpc SayHello3(Response) returns (Message){};
-    
+    rpc EscribirPropuesta(Propuesta) returns(Message){};
+    rpc HelperEscribirPropuesta(Propuesta) returns(Message){};
 
 }
