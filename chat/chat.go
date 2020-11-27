@@ -255,8 +255,8 @@ func (s *Server) HelperEscribirPropuesta(ctx context.Context, propuesta *Propues
 	if _, err := f.WriteString(encabezado + "\n"); err != nil {
 		log.Println(err)
 	}
-	for i2, _ := range propuesta.Pos {
-		if _, err := f.WriteString(propuesta.Titulo + "_" + strconv.Itoa(i2) + " " + "127.0.0.2" + "\n"); err != nil {
+	for i2, i := range propuesta.Pos {
+		if _, err := f.WriteString(propuesta.Titulo + "_" + strconv.Itoa(i2) + " " + strconv.Itoa(int(i)) + "\n"); err != nil {
 			log.Println(err)
 		}
 	}

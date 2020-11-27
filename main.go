@@ -123,6 +123,11 @@ func do(text string, c chat.ChatServiceClient, c2 chat.ChatServiceClient, c3 cha
 		respuesta, _ = c3.PedirConfirmacion(context.Background(), &Aviso)
 
 	}
+	fmt.Println(propuesta.Pos)
+	fmt.Println(propuesta.L1)
+	fmt.Println(propuesta.L2)
+	fmt.Println(propuesta.L3)
+
 	if respuesta.In == 1 {
 		fmt.Println("Propuesta Aceptada")
 	}
@@ -227,7 +232,8 @@ func main() {
 		text = strings.Replace(text, "\n", "", -1)
 		fmt.Println(text)
 		do(text, c, c2, c3)
-		do(text, c, c2, c3)
+		do2(text, c, c2, c3)
+
 	}
 
 }
