@@ -18,7 +18,7 @@ import (
 )
 
 func con() {
-	lis, err := net.Listen("tcp", ":9000")
+	lis, err := net.Listen("tcp", "dist25:9000")
 	if err != nil {
 		log.Fatalf("Failed to listen: %v", err)
 	}
@@ -49,7 +49,7 @@ func do2(text string, c chat.ChatServiceClient, c2 chat.ChatServiceClient, c3 ch
 	text3 := strings.Replace(text, "\n", "", -1)
 	fmt.Println(text3)
 	var conn *grpc.ClientConn
-	conn, err := grpc.Dial(":9004", grpc.WithInsecure())
+	conn, err := grpc.Dial("dist28:9004", grpc.WithInsecure())
 	c4 := chat.NewChatServiceClient(conn)
 
 	if err != nil {
@@ -288,7 +288,7 @@ func do(text string, c chat.ChatServiceClient, c2 chat.ChatServiceClient, c3 cha
 func main() {
 	go con()
 	var conn *grpc.ClientConn
-	conn, err := grpc.Dial(":9000", grpc.WithInsecure())
+	conn, err := grpc.Dial("dist25:9000", grpc.WithInsecure())
 	fmt.Println(err)
 	if err != nil {
 		log.Fatalf("uwu %s", err)
@@ -298,7 +298,7 @@ func main() {
 	defer conn.Close()
 
 	var conn2 *grpc.ClientConn
-	conn2, err2 := grpc.Dial(":9001", grpc.WithInsecure())
+	conn2, err2 := grpc.Dial("dist26:9001", grpc.WithInsecure())
 	fmt.Println(err2)
 
 	if err2 != nil {
@@ -309,7 +309,7 @@ func main() {
 	defer conn2.Close()
 
 	var conn3 *grpc.ClientConn
-	conn3, err3 := grpc.Dial(":9002", grpc.WithInsecure())
+	conn3, err3 := grpc.Dial("dist27:9002", grpc.WithInsecure())
 	fmt.Println(err3)
 
 	if err3 != nil {
