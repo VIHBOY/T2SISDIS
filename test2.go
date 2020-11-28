@@ -8,11 +8,11 @@ import (
 )
 
 func main() {
-	totalPartsNum := uint64(9)
+	totalPartsNum := uint64(3)
 
 	// just for fun, let's recombine back the chunked files in a new file
 
-	newFileName := "LMHV.pdf"
+	newFileName := "LMHV2.pdf"
 	_, err := os.Create(newFileName)
 
 	if err != nil {
@@ -39,7 +39,7 @@ func main() {
 	for j := uint64(0); j < totalPartsNum; j++ {
 
 		//read a chunk
-		currentChunkFileName := "lmhv_" + strconv.FormatUint(j, 10)
+		currentChunkFileName := "Laboratorio_2_Sistemas_Distribuidos_" + strconv.FormatUint(j, 10)
 
 		newFileChunk, err := os.Open(currentChunkFileName)
 

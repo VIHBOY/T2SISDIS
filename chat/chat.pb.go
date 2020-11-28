@@ -379,7 +379,7 @@ var file_chat_proto_rawDesc = []byte{
 	0x04, 0x20, 0x01, 0x28, 0x04, 0x52, 0x08, 0x63, 0x61, 0x6e, 0x74, 0x69, 0x64, 0x61, 0x64, 0x12,
 	0x1c, 0x0a, 0x09, 0x66, 0x69, 0x6c, 0x65, 0x43, 0x68, 0x75, 0x6e, 0x6b, 0x18, 0x05, 0x20, 0x01,
 	0x28, 0x0c, 0x52, 0x09, 0x66, 0x69, 0x6c, 0x65, 0x43, 0x68, 0x75, 0x6e, 0x6b, 0x22, 0x07, 0x0a,
-	0x05, 0x45, 0x6d, 0x70, 0x74, 0x79, 0x32, 0xd2, 0x05, 0x0a, 0x0b, 0x43, 0x68, 0x61, 0x74, 0x53,
+	0x05, 0x45, 0x6d, 0x70, 0x74, 0x79, 0x32, 0x82, 0x06, 0x0a, 0x0b, 0x43, 0x68, 0x61, 0x74, 0x53,
 	0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x2b, 0x0a, 0x08, 0x53, 0x61, 0x79, 0x48, 0x65, 0x6c,
 	0x6c, 0x6f, 0x12, 0x0e, 0x2e, 0x63, 0x68, 0x61, 0x74, 0x2e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
 	0x73, 0x65, 0x1a, 0x0d, 0x2e, 0x63, 0x68, 0x61, 0x74, 0x2e, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67,
@@ -424,7 +424,10 @@ var file_chat_proto_rawDesc = []byte{
 	0x74, 0x2e, 0x54, 0x69, 0x74, 0x75, 0x6c, 0x6f, 0x73, 0x22, 0x00, 0x12, 0x2e, 0x0a, 0x0c, 0x42,
 	0x75, 0x73, 0x63, 0x61, 0x72, 0x43, 0x68, 0x75, 0x6e, 0x6b, 0x73, 0x12, 0x0d, 0x2e, 0x63, 0x68,
 	0x61, 0x74, 0x2e, 0x54, 0x69, 0x74, 0x75, 0x6c, 0x6f, 0x73, 0x1a, 0x0d, 0x2e, 0x63, 0x68, 0x61,
-	0x74, 0x2e, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x22, 0x00, 0x62, 0x06, 0x70, 0x72, 0x6f,
+	0x74, 0x2e, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x22, 0x00, 0x12, 0x2e, 0x0a, 0x0b, 0x48,
+	0x61, 0x63, 0x65, 0x72, 0x43, 0x68, 0x75, 0x6e, 0x6b, 0x73, 0x12, 0x0d, 0x2e, 0x63, 0x68, 0x61,
+	0x74, 0x2e, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x1a, 0x0e, 0x2e, 0x63, 0x68, 0x61, 0x74,
+	0x2e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x62, 0x06, 0x70, 0x72, 0x6f,
 	0x74, 0x6f, 0x33,
 }
 
@@ -463,22 +466,24 @@ var file_chat_proto_depIdxs = []int32{
 	0,  // 11: chat.ChatService.HelperVerTitulos:input_type -> chat.Message
 	0,  // 12: chat.ChatService.ObtenerUbicaciones:input_type -> chat.Message
 	2,  // 13: chat.ChatService.BuscarChunks:input_type -> chat.Titulos
-	0,  // 14: chat.ChatService.SayHello:output_type -> chat.Message
-	0,  // 15: chat.ChatService.SayHello2:output_type -> chat.Message
-	0,  // 16: chat.ChatService.PedirConfirmacion:output_type -> chat.Message
-	1,  // 17: chat.ChatService.GenerarPropuesta:output_type -> chat.Propuesta
-	0,  // 18: chat.ChatService.Repartir:output_type -> chat.Message
-	0,  // 19: chat.ChatService.SayHello3:output_type -> chat.Message
-	0,  // 20: chat.ChatService.EscribirPropuesta:output_type -> chat.Message
-	0,  // 21: chat.ChatService.HelperEscribirPropuesta:output_type -> chat.Message
-	0,  // 22: chat.ChatService.AgregarTitulo:output_type -> chat.Message
-	0,  // 23: chat.ChatService.HelperAgregarTitulo:output_type -> chat.Message
-	2,  // 24: chat.ChatService.VerTitulos:output_type -> chat.Titulos
-	2,  // 25: chat.ChatService.HelperVerTitulos:output_type -> chat.Titulos
-	2,  // 26: chat.ChatService.ObtenerUbicaciones:output_type -> chat.Titulos
-	0,  // 27: chat.ChatService.BuscarChunks:output_type -> chat.Message
-	14, // [14:28] is the sub-list for method output_type
-	0,  // [0:14] is the sub-list for method input_type
+	0,  // 14: chat.ChatService.HacerChunks:input_type -> chat.Message
+	0,  // 15: chat.ChatService.SayHello:output_type -> chat.Message
+	0,  // 16: chat.ChatService.SayHello2:output_type -> chat.Message
+	0,  // 17: chat.ChatService.PedirConfirmacion:output_type -> chat.Message
+	1,  // 18: chat.ChatService.GenerarPropuesta:output_type -> chat.Propuesta
+	0,  // 19: chat.ChatService.Repartir:output_type -> chat.Message
+	0,  // 20: chat.ChatService.SayHello3:output_type -> chat.Message
+	0,  // 21: chat.ChatService.EscribirPropuesta:output_type -> chat.Message
+	0,  // 22: chat.ChatService.HelperEscribirPropuesta:output_type -> chat.Message
+	0,  // 23: chat.ChatService.AgregarTitulo:output_type -> chat.Message
+	0,  // 24: chat.ChatService.HelperAgregarTitulo:output_type -> chat.Message
+	2,  // 25: chat.ChatService.VerTitulos:output_type -> chat.Titulos
+	2,  // 26: chat.ChatService.HelperVerTitulos:output_type -> chat.Titulos
+	2,  // 27: chat.ChatService.ObtenerUbicaciones:output_type -> chat.Titulos
+	0,  // 28: chat.ChatService.BuscarChunks:output_type -> chat.Message
+	3,  // 29: chat.ChatService.HacerChunks:output_type -> chat.Response
+	15, // [15:30] is the sub-list for method output_type
+	0,  // [0:15] is the sub-list for method input_type
 	0,  // [0:0] is the sub-list for extension type_name
 	0,  // [0:0] is the sub-list for extension extendee
 	0,  // [0:0] is the sub-list for field type_name
@@ -597,6 +602,7 @@ type ChatServiceClient interface {
 	HelperVerTitulos(ctx context.Context, in *Message, opts ...grpc.CallOption) (*Titulos, error)
 	ObtenerUbicaciones(ctx context.Context, in *Message, opts ...grpc.CallOption) (*Titulos, error)
 	BuscarChunks(ctx context.Context, in *Titulos, opts ...grpc.CallOption) (*Message, error)
+	HacerChunks(ctx context.Context, in *Message, opts ...grpc.CallOption) (*Response, error)
 }
 
 type chatServiceClient struct {
@@ -733,6 +739,15 @@ func (c *chatServiceClient) BuscarChunks(ctx context.Context, in *Titulos, opts 
 	return out, nil
 }
 
+func (c *chatServiceClient) HacerChunks(ctx context.Context, in *Message, opts ...grpc.CallOption) (*Response, error) {
+	out := new(Response)
+	err := c.cc.Invoke(ctx, "/chat.ChatService/HacerChunks", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ChatServiceServer is the server API for ChatService service.
 type ChatServiceServer interface {
 	SayHello(context.Context, *Response) (*Message, error)
@@ -749,6 +764,7 @@ type ChatServiceServer interface {
 	HelperVerTitulos(context.Context, *Message) (*Titulos, error)
 	ObtenerUbicaciones(context.Context, *Message) (*Titulos, error)
 	BuscarChunks(context.Context, *Titulos) (*Message, error)
+	HacerChunks(context.Context, *Message) (*Response, error)
 }
 
 // UnimplementedChatServiceServer can be embedded to have forward compatible implementations.
@@ -796,6 +812,9 @@ func (*UnimplementedChatServiceServer) ObtenerUbicaciones(context.Context, *Mess
 }
 func (*UnimplementedChatServiceServer) BuscarChunks(context.Context, *Titulos) (*Message, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method BuscarChunks not implemented")
+}
+func (*UnimplementedChatServiceServer) HacerChunks(context.Context, *Message) (*Response, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method HacerChunks not implemented")
 }
 
 func RegisterChatServiceServer(s *grpc.Server, srv ChatServiceServer) {
@@ -1054,6 +1073,24 @@ func _ChatService_BuscarChunks_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ChatService_HacerChunks_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Message)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatServiceServer).HacerChunks(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/chat.ChatService/HacerChunks",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatServiceServer).HacerChunks(ctx, req.(*Message))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _ChatService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "chat.ChatService",
 	HandlerType: (*ChatServiceServer)(nil),
@@ -1113,6 +1150,10 @@ var _ChatService_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "BuscarChunks",
 			Handler:    _ChatService_BuscarChunks_Handler,
+		},
+		{
+			MethodName: "HacerChunks",
+			Handler:    _ChatService_HacerChunks_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

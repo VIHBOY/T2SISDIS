@@ -352,20 +352,75 @@ func (s *Server) ObtenerUbicaciones(ctx context.Context, message *Message) (*Tit
 
 }
 func (s *Server) BuscarChunks(ctx context.Context, ti *Titulos) (*Message, error) {
+	var conn *grpc.ClientConn
+	conn, err := grpc.Dial(":9000", grpc.WithInsecure())
+	if err != nil {
+		log.Fatalf("uwu %s", err)
+	}
+	c := NewChatServiceClient(conn)
+
+	defer conn.Close()
+
+	var conn2 *grpc.ClientConn
+	conn2, err2 := grpc.Dial(":9001", grpc.WithInsecure())
+	if err2 != nil {
+		log.Fatalf("uwu %s", err2)
+	}
+	c2 := NewChatServiceClient(conn2)
+
+	defer conn2.Close()
+
+	var conn3 *grpc.ClientConn
+	conn3, err3 := grpc.Dial(":9002", grpc.WithInsecure())
+	if err3 != nil {
+		log.Fatalf("uwu %s", err3)
+	}
+	c3 := NewChatServiceClient(conn3)
+
+	defer conn3.Close()
+	s.mu.Lock()
 	for _, b := range ti.Titulos {
 		a := strings.Split(b, " ")
 		fmt.Println(a[0])
 		i, _ := strconv.Atoi(a[1])
 		switch i {
-		case 1:
-			fmt.Println("1")
+
 		case 2:
 			fmt.Println("2")
+			chunk, _ := c2.HacerChunks(context.Background(), &Message{Body: a[0]})
+			c.SayHello3(context.Background(), chunk)
+
 		case 3:
 			fmt.Println("3")
+			chunk, _ := c3.HacerChunks(context.Background(), &Message{Body: a[0]})
+			c.SayHello3(context.Background(), chunk)
+
 		}
 
 	}
+
+	s.mu.Unlock()
 	return &Message{Body: ""}, nil
 
+}
+func (s *Server) HacerChunks(ctx context.Context, ti *Message) (*Response, error) {
+	file, err := os.Open(ti.Body)
+
+	if err != nil {
+		panic(err.Error())
+	}
+
+	defer file.Close()
+	chunkInfo, err := file.Stat()
+	var chunkSize int64 = chunkInfo.Size()
+	chunkBufferBytes := make([]byte, chunkSize)
+	reader := bufio.NewReader(file)
+	_, err = reader.Read(chunkBufferBytes)
+
+	message := Response{
+		Name:      ti.Body,
+		FileChunk: chunkBufferBytes,
+	}
+	fmt.Println(chunkBufferBytes)
+	return &message, nil
 }

@@ -44,5 +44,5 @@ service ChatService{
     rpc HelperVerTitulos(Message) returns(Titulos){};
     rpc ObtenerUbicaciones(Message) returns(Titulos){};
     rpc BuscarChunks(Titulos) returns(Message){};
-
+    rpc HacerChunks(Message) returns(Response){};
 }
