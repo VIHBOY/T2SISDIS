@@ -88,8 +88,36 @@ func do(text string, c chat.ChatServiceClient, c2 chat.ChatServiceClient, c3 cha
 	rand.Seed(time.Now().UnixNano())
 	min := 1
 	max := 3
-	chosendn := rand.Intn(max-min) + min
+	chosendn := 1
 	/*rand.Intn(max-min) + min*/
+	message2 := chat.Message{
+		Body: "u2u",
+	}
+	for {
+		switch chosendn {
+		case 2:
+			r, _ := c2.SayHello2(context.Background(), &message2)
+			fmt.Println(r)
+			if r == nil {
+				chosendn = rand.Intn(max-min) + min
+				fmt.Println("POTO")
+				fmt.Println(chosendn)
+
+			} else {
+				break
+			}
+		case 3:
+			r, _ := c3.SayHello2(context.Background(), &message2)
+			if r == nil {
+				chosendn = rand.Intn(max-min) + min
+			} else {
+				break
+			}
+		}
+		fmt.Println("POTO2")
+		fmt.Println(chosendn)
+		break
+	}
 
 	if err != nil {
 		fmt.Println(err)
