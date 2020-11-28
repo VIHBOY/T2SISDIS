@@ -4,6 +4,7 @@ package chat;
 message Message{
     string body=1;
     int32 in=2;
+    repeated int32 nodisponible=9;
 }
 
 message Propuesta{
@@ -45,4 +46,8 @@ service ChatService{
     rpc ObtenerUbicaciones(Message) returns(Titulos){};
     rpc BuscarChunks(Titulos) returns(Message){};
     rpc HacerChunks(Message) returns(Response){};
+    rpc Unir(Message) returns(Message){};
+    rpc GenerarPropuesta2(Message) returns (Propuesta){};
+    rpc PedirConfirmacion2(Message) returns (Message){};
+
 }

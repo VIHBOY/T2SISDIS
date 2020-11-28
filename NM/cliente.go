@@ -11,17 +11,31 @@ import (
 )
 
 func con() {
-	lis, err := net.Listen("tcp", ":9004")
+	var conn *grpc.ClientConn
+	conn, err := grpc.Dial(":9000", grpc.WithInsecure())
 	if err != nil {
-		log.Fatalf("Failed to listen: %v", err)
+		log.Fatalf("uwu %s", err)
 	}
 
-	s := chat.Server{}
-	grpcServer := grpc.NewServer()
+	defer conn.Close()
 
-	chat.RegisterChatServiceServer(grpcServer, &s)
-	if err := grpcServer.Serve(lis); err != nil {
-		log.Fatalf("a %v", err)
+	var conn2 *grpc.ClientConn
+	conn2, err2 := grpc.Dial(":9001", grpc.WithInsecure())
+	if err2 != nil {
+		log.Fatalf("uwu %s", err2)
+	}
+
+	defer conn2.Close()
+
+	var conn3 *grpc.ClientConn
+	conn3, err3 := grpc.Dial(":9002", grpc.WithInsecure())
+	if err3 != nil {
+		log.Fatalf("uwu %s", err3)
+	}
+
+	defer conn3.Close()
+	for {
+
 	}
 }
 
@@ -41,30 +55,17 @@ func main() {
 		os.Exit(1)
 	}
 	go con()
-	var conn *grpc.ClientConn
-	conn, err := grpc.Dial("dist25:9000", grpc.WithInsecure())
+	lis, err := net.Listen("tcp", ":9004")
 	if err != nil {
-		log.Fatalf("uwu %s", err)
+		log.Fatalf("Failed to listen: %v", err)
 	}
 
-	defer conn.Close()
+	s := chat.Server{}
+	grpcServer := grpc.NewServer()
 
-	var conn2 *grpc.ClientConn
-	conn2, err2 := grpc.Dial("dist26:9001", grpc.WithInsecure())
-	if err2 != nil {
-		log.Fatalf("uwu %s", err2)
+	chat.RegisterChatServiceServer(grpcServer, &s)
+	if err := grpcServer.Serve(lis); err != nil {
+		log.Fatalf("a %v", err)
 	}
 
-	defer conn2.Close()
-
-	var conn3 *grpc.ClientConn
-	conn3, err3 := grpc.Dial("dist27:9002", grpc.WithInsecure())
-	if err3 != nil {
-		log.Fatalf("uwu %s", err3)
-	}
-
-	defer conn3.Close()
-	for {
-
-	}
 }

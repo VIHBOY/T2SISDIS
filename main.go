@@ -49,7 +49,7 @@ func do2(text string, c chat.ChatServiceClient, c2 chat.ChatServiceClient, c3 ch
 	text3 := strings.Replace(text, "\n", "", -1)
 	fmt.Println(text3)
 	var conn *grpc.ClientConn
-	conn, err := grpc.Dial("dist28:9004", grpc.WithInsecure())
+	conn, err := grpc.Dial(":9004", grpc.WithInsecure())
 	c4 := chat.NewChatServiceClient(conn)
 
 	if err != nil {
@@ -62,6 +62,11 @@ func do2(text string, c chat.ChatServiceClient, c2 chat.ChatServiceClient, c3 ch
 	Ti, _ := c4.ObtenerUbicaciones(context.Background(), &Agregar2)
 	fmt.Println(Ti)
 	c.BuscarChunks(context.Background(), Ti)
+	me := chat.Message{
+		Body: text3,
+		In:   int32(len(Ti.Titulos)),
+	}
+	c.Unir(context.Background(), &me)
 	defer conn.Close()
 
 }
@@ -81,9 +86,8 @@ func do(text string, c chat.ChatServiceClient, c2 chat.ChatServiceClient, c3 cha
 	file, err := os.Open(fileToBeChunked)
 
 	rand.Seed(time.Now().UnixNano())
-	max := 3
-	min := 1
-	chosendn := rand.Intn(max-min) + min
+
+	chosendn := 1
 	/*rand.Intn(max-min) + min*/
 
 	if err != nil {
@@ -130,6 +134,7 @@ func do(text string, c chat.ChatServiceClient, c2 chat.ChatServiceClient, c3 cha
 		respuesta, _ = c3.PedirConfirmacion(context.Background(), &Aviso)
 
 	}
+	fmt.Println(respuesta.Nodisponible)
 	fmt.Println(propuesta.Pos)
 	fmt.Println(propuesta.L1)
 	fmt.Println(propuesta.L2)
@@ -141,6 +146,52 @@ func do(text string, c chat.ChatServiceClient, c2 chat.ChatServiceClient, c3 cha
 			fmt.Println("Propuesta Aceptada")
 		}
 	*/
+
+	for {
+		if respuesta.In == 1 {
+			fmt.Println("Propuesta Aceptada")
+			break
+		} else {
+			fmt.Println("Propuesta No Aceptada")
+			fmt.Println(respuesta.Nodisponible)
+			Message_totalchunks := chat.Message{
+				In:           int32(totalPartsNum),
+				Nodisponible: respuesta.Nodisponible,
+			}
+			switch chosendn {
+			case 1:
+				propuesta, _ = c.GenerarPropuesta2(context.Background(), &Message_totalchunks)
+			case 2:
+				propuesta, _ = c2.GenerarPropuesta2(context.Background(), &Message_totalchunks)
+			case 3:
+				propuesta, _ = c3.GenerarPropuesta2(context.Background(), &Message_totalchunks)
+			}
+			Aviso := chat.Message{
+				In:           int32(chosendn),
+				Nodisponible: respuesta.Nodisponible,
+			}
+			var respuesta *chat.Message
+			switch chosendn {
+			case 1:
+				respuesta, _ = c.PedirConfirmacion2(context.Background(), &Aviso)
+			case 2:
+				respuesta, _ = c2.PedirConfirmacion2(context.Background(), &Aviso)
+			case 3:
+				respuesta, _ = c3.PedirConfirmacion2(context.Background(), &Aviso)
+
+			}
+			fmt.Println(respuesta.In)
+			if respuesta.In == 1 {
+				break
+			}
+		}
+	}
+	propuesta.Titulo = titulo
+
+	fmt.Println(propuesta.Pos)
+	fmt.Println(propuesta.L1)
+	fmt.Println(propuesta.L2)
+	fmt.Println(propuesta.L3)
 
 	switch chosendn {
 	case 1:
@@ -207,7 +258,8 @@ func do(text string, c chat.ChatServiceClient, c2 chat.ChatServiceClient, c3 cha
 func main() {
 	go con()
 	var conn *grpc.ClientConn
-	conn, err := grpc.Dial("dist25:9000", grpc.WithInsecure())
+	conn, err := grpc.Dial(":9000", grpc.WithInsecure())
+	fmt.Println(err)
 	if err != nil {
 		log.Fatalf("uwu %s", err)
 	}
@@ -216,7 +268,9 @@ func main() {
 	defer conn.Close()
 
 	var conn2 *grpc.ClientConn
-	conn2, err2 := grpc.Dial("dist26:9001", grpc.WithInsecure())
+	conn2, err2 := grpc.Dial(":9001", grpc.WithInsecure())
+	fmt.Println(err2)
+
 	if err2 != nil {
 		log.Fatalf("uwu %s", err2)
 	}
@@ -225,7 +279,9 @@ func main() {
 	defer conn2.Close()
 
 	var conn3 *grpc.ClientConn
-	conn3, err3 := grpc.Dial("dist27:9002", grpc.WithInsecure())
+	conn3, err3 := grpc.Dial(":9002", grpc.WithInsecure())
+	fmt.Println(err3)
+
 	if err3 != nil {
 		log.Fatalf("uwu %s", err3)
 	}

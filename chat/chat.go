@@ -112,26 +112,27 @@ func (s *Server) PedirConfirmacion(ctx context.Context, message *Message) (*Mess
 	count := 0
 	ganador := int(message.In)
 	var conn *grpc.ClientConn
-	conn, err := grpc.Dial("dist25:9000", grpc.WithInsecure())
+	conn, err := grpc.Dial(":9000", grpc.WithInsecure())
 	if err != nil {
-		log.Fatalf("uwu %s", err)
+		fmt.Println(err)
 	}
 	c := NewChatServiceClient(conn)
 
 	defer conn.Close()
 
 	var conn2 *grpc.ClientConn
-	conn2, err2 := grpc.Dial("dist26:9001", grpc.WithInsecure())
+	conn2, err2 := grpc.Dial(":9001", grpc.WithInsecure())
 	if err2 != nil {
-		log.Fatalf("uwu %s", err2)
+		fmt.Println("uwu")
+
 	}
 	c2 := NewChatServiceClient(conn2)
 	defer conn2.Close()
 
 	var conn3 *grpc.ClientConn
-	conn3, err3 := grpc.Dial("dist27:9002", grpc.WithInsecure())
+	conn3, err3 := grpc.Dial(":9002", grpc.WithInsecure())
 	if err3 != nil {
-		log.Fatalf("uwu %s", err3)
+		fmt.Println(err)
 	}
 	c3 := NewChatServiceClient(conn3)
 	defer conn3.Close()
@@ -140,43 +141,60 @@ func (s *Server) PedirConfirmacion(ctx context.Context, message *Message) (*Mess
 	message2 := Message{
 		Body: "u2u",
 	}
+	message3 := Message{}
 	if ganador == 1 {
 		responde, _ = c2.SayHello2(context.Background(), &message2)
-		if responde.In == 1 {
+		if responde != nil && responde.In == 1 {
 			count++
+		} else {
+			message3.Nodisponible = append(message3.Nodisponible, int32(2))
 		}
 		responde, _ = c3.SayHello2(context.Background(), &message2)
-		if responde.In == 1 {
+		fmt.Println(responde)
+		if responde != nil && responde.In == 1 {
 			count++
+		} else {
+			message3.Nodisponible = append(message3.Nodisponible, int32(3))
 		}
 
 	}
 	if ganador == 2 {
 		responde, _ = c.SayHello2(context.Background(), &message2)
-		if responde.In == 1 {
+		if responde != nil && responde.In == 1 {
 			count++
+		} else {
+			message3.Nodisponible = append(message3.Nodisponible, int32(1))
 		}
 		responde, _ = c3.SayHello2(context.Background(), &message2)
-		if responde.In == 1 {
+		if responde != nil && responde.In == 1 {
 			count++
+		} else {
+			message3.Nodisponible = append(message3.Nodisponible, int32(3))
 		}
 
 	}
 	if ganador == 3 {
 		responde, _ = c.SayHello2(context.Background(), &message2)
-		if responde.In == 1 {
+		if responde != nil && responde.In == 1 {
 			count++
+		} else {
+			message3.Nodisponible = append(message3.Nodisponible, int32(1))
 		}
 		responde, _ = c2.SayHello2(context.Background(), &message2)
-		if responde.In == 1 {
+		if responde != nil && responde.In == 1 {
 			count++
+		} else {
+			message3.Nodisponible = append(message3.Nodisponible, int32(2))
 		}
 
 	}
+
 	if count == 2 {
-		return &Message{In: 1}, nil
+		message3.In = 1
+		return &message3, nil
 	} else {
-		return &Message{In: 0}, nil
+		message3.In = 0
+		return &message3, nil
 
 	}
 }
@@ -184,7 +202,7 @@ func (s *Server) PedirConfirmacion(ctx context.Context, message *Message) (*Mess
 func (s *Server) Repartir(ctx context.Context, propuesta *Propuesta) (*Message, error) {
 
 	var conn *grpc.ClientConn
-	conn, err := grpc.Dial("dist25:9000", grpc.WithInsecure())
+	conn, err := grpc.Dial(":9000", grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("uwu %s", err)
 	}
@@ -193,7 +211,7 @@ func (s *Server) Repartir(ctx context.Context, propuesta *Propuesta) (*Message, 
 	defer conn.Close()
 
 	var conn2 *grpc.ClientConn
-	conn2, err2 := grpc.Dial("dist26:9001", grpc.WithInsecure())
+	conn2, err2 := grpc.Dial(":9001", grpc.WithInsecure())
 	if err2 != nil {
 		log.Fatalf("uwu %s", err2)
 	}
@@ -202,7 +220,7 @@ func (s *Server) Repartir(ctx context.Context, propuesta *Propuesta) (*Message, 
 	defer conn2.Close()
 
 	var conn3 *grpc.ClientConn
-	conn3, err3 := grpc.Dial("dist27:9002", grpc.WithInsecure())
+	conn3, err3 := grpc.Dial(":9002", grpc.WithInsecure())
 	if err3 != nil {
 		log.Fatalf("uwu %s", err3)
 	}
@@ -231,7 +249,7 @@ func (s *Server) Repartir(ctx context.Context, propuesta *Propuesta) (*Message, 
 func (s *Server) EscribirPropuesta(ctx context.Context, propuesta *Propuesta) (*Message, error) {
 
 	var conn *grpc.ClientConn
-	conn, err := grpc.Dial("dist28:9004", grpc.WithInsecure())
+	conn, err := grpc.Dial(":9004", grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("uwu %s", err)
 	}
@@ -266,7 +284,7 @@ func (s *Server) HelperEscribirPropuesta(ctx context.Context, propuesta *Propues
 func (s *Server) AgregarTitulo(ctx context.Context, message *Message) (*Message, error) {
 
 	var conn3 *grpc.ClientConn
-	conn3, err3 := grpc.Dial("dist28:9004", grpc.WithInsecure())
+	conn3, err3 := grpc.Dial(":9004", grpc.WithInsecure())
 	if err3 != nil {
 		log.Fatalf("uwu %s", err3)
 	}
@@ -290,7 +308,7 @@ func (s *Server) HelperAgregarTitulo(ctx context.Context, message *Message) (*Me
 func (s *Server) VerTitulos(ctx context.Context, message *Message) (*Titulos, error) {
 
 	var conn3 *grpc.ClientConn
-	conn3, err3 := grpc.Dial("dist28:9004", grpc.WithInsecure())
+	conn3, err3 := grpc.Dial(":9004", grpc.WithInsecure())
 	if err3 != nil {
 		log.Fatalf("uwu %s", err3)
 	}
@@ -353,7 +371,7 @@ func (s *Server) ObtenerUbicaciones(ctx context.Context, message *Message) (*Tit
 }
 func (s *Server) BuscarChunks(ctx context.Context, ti *Titulos) (*Message, error) {
 	var conn *grpc.ClientConn
-	conn, err := grpc.Dial("dist25:9000", grpc.WithInsecure())
+	conn, err := grpc.Dial(":9000", grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("uwu %s", err)
 	}
@@ -362,7 +380,7 @@ func (s *Server) BuscarChunks(ctx context.Context, ti *Titulos) (*Message, error
 	defer conn.Close()
 
 	var conn2 *grpc.ClientConn
-	conn2, err2 := grpc.Dial("dist26:9001", grpc.WithInsecure())
+	conn2, err2 := grpc.Dial(":9001", grpc.WithInsecure())
 	if err2 != nil {
 		log.Fatalf("uwu %s", err2)
 	}
@@ -371,7 +389,7 @@ func (s *Server) BuscarChunks(ctx context.Context, ti *Titulos) (*Message, error
 	defer conn2.Close()
 
 	var conn3 *grpc.ClientConn
-	conn3, err3 := grpc.Dial("dist27:9002", grpc.WithInsecure())
+	conn3, err3 := grpc.Dial(":9002", grpc.WithInsecure())
 	if err3 != nil {
 		log.Fatalf("uwu %s", err3)
 	}
@@ -424,4 +442,289 @@ func (s *Server) HacerChunks(ctx context.Context, ti *Message) (*Response, error
 	}
 	fmt.Println(chunkBufferBytes)
 	return &message, nil
+}
+func (s *Server) Unir(ctx context.Context, ti *Message) (*Message, error) {
+	totalPartsNum := uint64(ti.In)
+
+	// just for fun, let's recombine back the chunked files in a new file
+
+	newFileName := ti.Body + "1.pdf"
+	_, err := os.Create(newFileName)
+
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	//set the newFileName file to APPEND MODE!!
+	// open files r and w
+
+	file, err := os.OpenFile(newFileName, os.O_APPEND|os.O_WRONLY, os.ModeAppend)
+
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	// IMPORTANT! do not defer a file.Close when opening a file for APPEND mode!
+	// defer file.Close()
+
+	// just information on which part of the new file we are appending
+	var writePosition int64 = 0
+
+	for j := uint64(0); j < totalPartsNum; j++ {
+
+		//read a chunk
+		currentChunkFileName := "Laboratorio_" + strconv.FormatUint(j, 10)
+
+		newFileChunk, err := os.Open(currentChunkFileName)
+
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+		defer newFileChunk.Close()
+
+		chunkInfo, err := newFileChunk.Stat()
+
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+		// calculate the bytes size of each chunk
+		// we are not going to rely on previous data and constant
+
+		var chunkSize int64 = chunkInfo.Size()
+		chunkBufferBytes := make([]byte, chunkSize)
+
+		fmt.Println("Appending at position : [", writePosition, "] bytes")
+		writePosition = writePosition + chunkSize
+
+		// read into chunkBufferBytes
+		reader := bufio.NewReader(newFileChunk)
+		_, err = reader.Read(chunkBufferBytes)
+
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+		// DON't USE ioutil.WriteFile -- it will overwrite the previous bytes!
+		// write/save buffer to disk
+		//ioutil.WriteFile(newFileName, chunkBufferBytes, os.ModeAppend)
+
+		n, err := file.Write(chunkBufferBytes)
+
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+		file.Sync() //flush to disk
+
+		// free up the buffer for next cycle
+		// should not be a problem if the chunk size is small, but
+		// can be resource hogging if the chunk size is huge.
+		// also a good practice to clean up your own plate after eating
+
+		chunkBufferBytes = nil // reset or empty our buffer
+
+		fmt.Println("Written ", n, " bytes")
+
+		fmt.Println("Recombining part [", j, "] into : ", newFileName)
+	}
+
+	// now, we close the newFileName
+	file.Close()
+	return &Message{Body: ""}, nil
+}
+func (s *Server) GenerarPropuesta2(ctx context.Context, message *Message) (*Propuesta, error) {
+	cantidad := int(message.In)
+	a := message.Nodisponible
+	var propuesta Propuesta
+	if cantidad == 3 {
+		if a[0] == 2 && a[1] == 3 {
+			propuesta.Id1++
+			propuesta.L1 = append(propuesta.L2, int32(0))
+			propuesta.Pos = append(propuesta.Pos, 1)
+			propuesta.Id1++
+			propuesta.L1 = append(propuesta.L2, int32(1))
+			propuesta.Pos = append(propuesta.Pos, 1)
+			propuesta.Id1++
+			propuesta.L1 = append(propuesta.L2, int32(2))
+			propuesta.Pos = append(propuesta.Pos, 1)
+
+		}
+		if a[0] == 2 {
+			propuesta.Id1++
+			propuesta.L1 = append(propuesta.L1, int32(0))
+			propuesta.Pos = append(propuesta.Pos, 1)
+			propuesta.Id3++
+			propuesta.L3 = append(propuesta.L3, int32(1))
+			propuesta.Pos = append(propuesta.Pos, 3)
+			propuesta.Id3++
+			propuesta.L3 = append(propuesta.L3, int32(2))
+			propuesta.Pos = append(propuesta.Pos, 3)
+		}
+		if a[0] == 3 {
+			propuesta.Id1++
+			propuesta.L1 = append(propuesta.L1, int32(0))
+			propuesta.Pos = append(propuesta.Pos, 1)
+			propuesta.Id1++
+			propuesta.L1 = append(propuesta.L1, int32(1))
+			propuesta.Pos = append(propuesta.Pos, 1)
+			propuesta.Id2++
+			propuesta.L2 = append(propuesta.L2, int32(2))
+			propuesta.Pos = append(propuesta.Pos, 2)
+		}
+		/*propuesta.Id1++
+		propuesta.L1 = append(propuesta.L1, int32(0))
+		propuesta.Pos = append(propuesta.Pos, 1)
+		propuesta.Id2++
+		propuesta.L2 = append(propuesta.L2, int32(1))
+		propuesta.Pos = append(propuesta.Pos, 2)
+		propuesta.Id3++
+		propuesta.L3 = append(propuesta.L3, int32(2))
+		propuesta.Pos = append(propuesta.Pos, 3)*/
+		return &propuesta, nil
+	}
+	for i := 0; i < cantidad; i++ {
+		rand.Seed(time.Now().UnixNano())
+		min := 1
+		max := 3
+		chosendn := rand.Intn(max-min+1) + min
+		for {
+			if chosendn == int(a[0]) {
+				chosendn = rand.Intn(max-min+1) + min
+			}
+			if chosendn != int(a[0]) {
+				break
+			}
+		}
+		switch chosendn {
+		case 1:
+			propuesta.Id1++
+			propuesta.L1 = append(propuesta.L1, int32(i))
+			propuesta.Pos = append(propuesta.Pos, 1)
+		case 2:
+			propuesta.Id2++
+			propuesta.L2 = append(propuesta.L2, int32(i))
+			propuesta.Pos = append(propuesta.Pos, 2)
+
+		case 3:
+			propuesta.Id3++
+			propuesta.L3 = append(propuesta.L3, int32(i))
+			propuesta.Pos = append(propuesta.Pos, 3)
+
+		}
+	}
+
+	return &propuesta, nil
+}
+func (s *Server) PedirConfirmacion2(ctx context.Context, message *Message) (*Message, error) {
+	a := message.Nodisponible
+	fmt.Println(a)
+	count := 0
+	ganador := int(message.In)
+
+	var conn *grpc.ClientConn
+	conn, err := grpc.Dial(":9000", grpc.WithInsecure())
+	if err != nil {
+		fmt.Println(err)
+	}
+	c := NewChatServiceClient(conn)
+
+	defer conn.Close()
+
+	var conn2 *grpc.ClientConn
+	conn2, err2 := grpc.Dial(":9001", grpc.WithInsecure())
+	if err2 != nil {
+		fmt.Println("uwu")
+
+	}
+	c2 := NewChatServiceClient(conn2)
+	defer conn2.Close()
+
+	var conn3 *grpc.ClientConn
+	conn3, err3 := grpc.Dial(":9002", grpc.WithInsecure())
+	if err3 != nil {
+		fmt.Println(err)
+	}
+	c3 := NewChatServiceClient(conn3)
+	defer conn3.Close()
+
+	var responde *Message
+	message2 := Message{
+		Body: "u2u",
+	}
+	message3 := Message{}
+	if ganador == 1 {
+		if a[0] != 2 {
+			responde, _ = c2.SayHello2(context.Background(), &message2)
+			if responde != nil && responde.In == 1 {
+				count++
+			} else {
+				message3.Nodisponible = append(message3.Nodisponible, int32(2))
+			}
+		}
+		if a[0] != 3 {
+			responde, _ = c3.SayHello2(context.Background(), &message2)
+			fmt.Println(responde)
+			if responde != nil && responde.In == 1 {
+				count++
+			} else {
+				message3.Nodisponible = append(message3.Nodisponible, int32(3))
+			}
+		}
+
+	}
+	if ganador == 2 {
+		if a[0] != 1 {
+			responde, _ = c.SayHello2(context.Background(), &message2)
+			if responde != nil && responde.In == 1 {
+				count++
+			} else {
+				message3.Nodisponible = append(message3.Nodisponible, int32(1))
+			}
+		}
+		if a[0] != 3 {
+			responde, _ = c3.SayHello2(context.Background(), &message2)
+			if responde != nil && responde.In == 1 {
+				count++
+			} else {
+				message3.Nodisponible = append(message3.Nodisponible, int32(3))
+			}
+		}
+
+	}
+	if ganador == 3 {
+		if a[0] != 1 {
+			responde, _ = c.SayHello2(context.Background(), &message2)
+			if responde != nil && responde.In == 1 {
+				count++
+			} else {
+				message3.Nodisponible = append(message3.Nodisponible, int32(1))
+			}
+		}
+		if a[0] != 2 {
+			responde, _ = c2.SayHello2(context.Background(), &message2)
+			if responde != nil && responde.In == 1 {
+				count++
+			} else {
+				message3.Nodisponible = append(message3.Nodisponible, int32(2))
+			}
+		}
+
+	}
+
+	if count == 2-len(a) {
+		message3.In = 1
+		return &message3, nil
+	} else {
+		message3.In = 0
+		return &message3, nil
+
+	}
 }
