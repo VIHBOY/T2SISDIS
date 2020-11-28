@@ -135,6 +135,7 @@ func do(text string, c chat.ChatServiceClient, c2 chat.ChatServiceClient, c3 cha
 	fmt.Println(propuesta.L2)
 	fmt.Println(propuesta.L3)
 
+	_ = respuesta
 	/*
 		if respuesta.In == 1 {
 			fmt.Println("Propuesta Aceptada")
