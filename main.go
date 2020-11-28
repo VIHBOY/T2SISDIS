@@ -18,7 +18,7 @@ import (
 )
 
 func con() {
-	lis, err := net.Listen("tcp", "dist25:9000")
+	lis, err := net.Listen("tcp", ":9000")
 	if err != nil {
 		log.Fatalf("Failed to listen: %v", err)
 	}
