@@ -150,7 +150,6 @@ func (s *Server) PedirConfirmacion(ctx context.Context, message *Message) (*Mess
 			message3.Nodisponible = append(message3.Nodisponible, int32(2))
 		}
 		responde, _ = c3.SayHello2(context.Background(), &message2)
-		fmt.Println(responde)
 		if responde != nil && responde.In == 1 {
 			count++
 		} else {
@@ -671,10 +670,11 @@ func (s *Server) PedirConfirmacion2(ctx context.Context, message *Message) (*Mes
 	}
 	message3 := Message{}
 	if ganador == 1 {
-
-		if a[0] == 2 && a[1] == 3 {
-			message3.In = 1
-			return &message3, nil
+		if len(a) == 2 {
+			if a[0] == 2 && a[1] == 3 {
+				message3.In = 1
+				return &message3, nil
+			}
 		}
 		if a[0] != 2 {
 			responde, _ = c2.SayHello2(context.Background(), &message2)

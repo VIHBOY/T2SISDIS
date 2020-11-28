@@ -163,6 +163,7 @@ func do(text string, c chat.ChatServiceClient, c2 chat.ChatServiceClient, c3 cha
 		respuesta, _ = c3.PedirConfirmacion(context.Background(), &Aviso)
 
 	}
+	fmt.Println("uwu")
 	fmt.Println(respuesta.Nodisponible)
 	fmt.Println(propuesta.Pos)
 	fmt.Println(propuesta.L1)
