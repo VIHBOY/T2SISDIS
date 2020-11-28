@@ -49,7 +49,9 @@ func do2(text string, c chat.ChatServiceClient, c2 chat.ChatServiceClient, c3 ch
 	text3 := strings.Replace(text, "\n", "", -1)
 	fmt.Println(text3)
 	var conn *grpc.ClientConn
-	conn, err := grpc.Dial(":9000", grpc.WithInsecure())
+	conn, err := grpc.Dial(":9004", grpc.WithInsecure())
+	c4 := chat.NewChatServiceClient(conn)
+
 	if err != nil {
 		log.Fatalf("uwu %s", err)
 	}
@@ -57,7 +59,7 @@ func do2(text string, c chat.ChatServiceClient, c2 chat.ChatServiceClient, c3 ch
 	Agregar2 := chat.Message{
 		Body: text3,
 	}
-	Ti, _ := c.ObtenerUbicaciones(context.Background(), &Agregar2)
+	Ti, _ := c4.ObtenerUbicaciones(context.Background(), &Agregar2)
 	fmt.Println(Ti)
 	c.BuscarChunks(context.Background(), Ti)
 	defer conn.Close()

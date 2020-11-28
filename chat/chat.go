@@ -405,7 +405,7 @@ func (s *Server) BuscarChunks(ctx context.Context, ti *Titulos) (*Message, error
 }
 func (s *Server) HacerChunks(ctx context.Context, ti *Message) (*Response, error) {
 	file, err := os.Open(ti.Body)
-
+	a := strings.Split(ti.Body, "_")
 	if err != nil {
 		panic(err.Error())
 	}
@@ -418,7 +418,8 @@ func (s *Server) HacerChunks(ctx context.Context, ti *Message) (*Response, error
 	_, err = reader.Read(chunkBufferBytes)
 
 	message := Response{
-		Name:      ti.Body,
+		Name:      a[0],
+		Info:      a[1],
 		FileChunk: chunkBufferBytes,
 	}
 	fmt.Println(chunkBufferBytes)
