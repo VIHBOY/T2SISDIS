@@ -278,24 +278,24 @@ func (s *Server) EscribirPropuesta(ctx context.Context, propuesta *Propuesta) (*
 	c3 := NewChatServiceClient(conn3)
 
 	defer conn3.Close()
-	var auxiliar *Message
+	var auxiliar Message
 	var respuesta1 *Message
 	var respuesta2 *Message
 	var respuesta3 *Message
 
-	respuesta1, _ = c.ConsultarRA(context.Background(), auxiliar)
-	respuesta2, _ = c2.ConsultarRA(context.Background(), auxiliar)
-	respuesta3, _ = c3.ConsultarRA(context.Background(), auxiliar)
+	respuesta1, _ = c.ConsultarRA(context.Background(), &auxiliar)
+	respuesta2, _ = c2.ConsultarRA(context.Background(), &auxiliar)
+	respuesta3, _ = c3.ConsultarRA(context.Background(), &auxiliar)
 
 	if respuesta1.Body == "0" && respuesta2.Body == "0" && respuesta3.Body == "0" {
 		auxiliar.Body = "1"
 		switch propuesta.Chosendn {
 		case "1":
-			c.CambiarRA(context.Background(), auxiliar)
+			c.CambiarRA(context.Background(), &auxiliar)
 		case "2":
-			c2.CambiarRA(context.Background(), auxiliar)
+			c2.CambiarRA(context.Background(), &auxiliar)
 		case "3":
-			c3.CambiarRA(context.Background(), auxiliar)
+			c3.CambiarRA(context.Background(), &auxiliar)
 		}
 		var conn4 *grpc.ClientConn
 		conn4, err4 := grpc.Dial("dist28:9004", grpc.WithInsecure())
@@ -310,11 +310,11 @@ func (s *Server) EscribirPropuesta(ctx context.Context, propuesta *Propuesta) (*
 		auxiliar.Body = "0"
 		switch propuesta.Chosendn {
 		case "1":
-			c.CambiarRA(context.Background(), auxiliar)
+			c.CambiarRA(context.Background(), &auxiliar)
 		case "2":
-			c2.CambiarRA(context.Background(), auxiliar)
+			c2.CambiarRA(context.Background(), &auxiliar)
 		case "3":
-			c3.CambiarRA(context.Background(), auxiliar)
+			c3.CambiarRA(context.Background(), &auxiliar)
 		}
 	}
 
