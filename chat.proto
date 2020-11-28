@@ -16,6 +16,7 @@ message Propuesta{
     repeated int32 l3=6;
     repeated int32 pos=7;
     string titulo=8; 
+    string chosendn=9;
 }
 message Titulos{
     repeated string titulos=1;
@@ -49,5 +50,6 @@ service ChatService{
     rpc Unir(Message) returns(Message){};
     rpc GenerarPropuesta2(Message) returns (Propuesta){};
     rpc PedirConfirmacion2(Message) returns (Message){};
-
+    rpc CambiarRA(Message) returns (Message){};
+    rpc ConsultarRA(Message) returns (Message){};
 }

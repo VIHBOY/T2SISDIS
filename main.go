@@ -225,10 +225,13 @@ func do(text string, c chat.ChatServiceClient, c2 chat.ChatServiceClient, c3 cha
 
 	switch chosendn {
 	case 1:
+		propuesta.Chosendn = "1"
 		respuesta, _ = c.EscribirPropuesta(context.Background(), propuesta)
 	case 2:
+		propuesta.Chosendn = "2"
 		respuesta, _ = c2.EscribirPropuesta(context.Background(), propuesta)
 	case 3:
+		propuesta.Chosendn = "3"
 		respuesta, _ = c3.EscribirPropuesta(context.Background(), propuesta)
 
 	}
@@ -287,6 +290,8 @@ func do(text string, c chat.ChatServiceClient, c2 chat.ChatServiceClient, c3 cha
 
 func main() {
 	go con()
+	var iniciar *chat.Message
+	iniciar.Body = "0"
 	var conn *grpc.ClientConn
 	conn, err := grpc.Dial("dist25:9000", grpc.WithInsecure())
 	fmt.Println(err)
@@ -294,6 +299,7 @@ func main() {
 		log.Fatalf("uwu %s", err)
 	}
 	c := chat.NewChatServiceClient(conn)
+	c.CambiarRA(context.Background(), iniciar)
 
 	defer conn.Close()
 
@@ -305,6 +311,7 @@ func main() {
 		log.Fatalf("uwu %s", err2)
 	}
 	c2 := chat.NewChatServiceClient(conn2)
+	c2.CambiarRA(context.Background(), iniciar)
 
 	defer conn2.Close()
 
@@ -316,6 +323,7 @@ func main() {
 		log.Fatalf("uwu %s", err3)
 	}
 	c3 := chat.NewChatServiceClient(conn3)
+	c3.CambiarRA(context.Background(), iniciar)
 
 	defer conn3.Close()
 	for {

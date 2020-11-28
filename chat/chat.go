@@ -24,6 +24,7 @@ type Server struct {
 	w1          int
 	w2          int
 	w3          int
+	ra          string
 	ListaChunks []Response
 }
 
@@ -246,9 +247,9 @@ func (s *Server) Repartir(ctx context.Context, propuesta *Propuesta) (*Message, 
 	return &Message{Body: ""}, nil
 }
 func (s *Server) EscribirPropuesta(ctx context.Context, propuesta *Propuesta) (*Message, error) {
-
 	var conn *grpc.ClientConn
-	conn, err := grpc.Dial("dist28:9004", grpc.WithInsecure())
+	conn, err := grpc.Dial("dist25:9000", grpc.WithInsecure())
+	fmt.Println(err)
 	if err != nil {
 		log.Fatalf("uwu %s", err)
 	}
@@ -256,12 +257,71 @@ func (s *Server) EscribirPropuesta(ctx context.Context, propuesta *Propuesta) (*
 
 	defer conn.Close()
 
-	s.mu.Lock()
-	c.HelperEscribirPropuesta(context.Background(), propuesta)
-	s.mu.Unlock()
+	var conn2 *grpc.ClientConn
+	conn2, err2 := grpc.Dial("dist26:9001", grpc.WithInsecure())
+	fmt.Println(err2)
+
+	if err2 != nil {
+		log.Fatalf("uwu %s", err2)
+	}
+	c2 := NewChatServiceClient(conn2)
+
+	defer conn2.Close()
+
+	var conn3 *grpc.ClientConn
+	conn3, err3 := grpc.Dial("dist27:9002", grpc.WithInsecure())
+	fmt.Println(err3)
+
+	if err3 != nil {
+		log.Fatalf("uwu %s", err3)
+	}
+	c3 := NewChatServiceClient(conn3)
+
+	defer conn3.Close()
+	var auxiliar *Message
+	var respuesta1 *Message
+	var respuesta2 *Message
+	var respuesta3 *Message
+
+	respuesta1, _ = c.ConsultarRA(context.Background(), auxiliar)
+	respuesta2, _ = c2.ConsultarRA(context.Background(), auxiliar)
+	respuesta3, _ = c3.ConsultarRA(context.Background(), auxiliar)
+
+	if respuesta1.Body == "0" && respuesta2.Body == "0" && respuesta3.Body == "0" {
+		auxiliar.Body = "1"
+		switch propuesta.Chosendn {
+		case "1":
+			c.CambiarRA(context.Background(), auxiliar)
+		case "2":
+			c2.CambiarRA(context.Background(), auxiliar)
+		case "3":
+			c3.CambiarRA(context.Background(), auxiliar)
+		}
+		var conn4 *grpc.ClientConn
+		conn4, err4 := grpc.Dial("dist28:9004", grpc.WithInsecure())
+		if err4 != nil {
+			log.Fatalf("uwu %s", err)
+		}
+		c4 := NewChatServiceClient(conn4)
+
+		defer conn.Close()
+
+		c4.HelperEscribirPropuesta(context.Background(), propuesta)
+		auxiliar.Body = "0"
+		switch propuesta.Chosendn {
+		case "1":
+			c.CambiarRA(context.Background(), auxiliar)
+		case "2":
+			c2.CambiarRA(context.Background(), auxiliar)
+		case "3":
+			c3.CambiarRA(context.Background(), auxiliar)
+		}
+	}
+
 	return &Message{Body: ""}, nil
 }
 func (s *Server) HelperEscribirPropuesta(ctx context.Context, propuesta *Propuesta) (*Message, error) {
+	s.mu.Lock()
 	f, err := os.OpenFile("Log.txt",
 		os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
@@ -278,6 +338,7 @@ func (s *Server) HelperEscribirPropuesta(ctx context.Context, propuesta *Propues
 			log.Println(err)
 		}
 	}
+	s.mu.Unlock()
 	return &Message{Body: ""}, nil
 }
 func (s *Server) AgregarTitulo(ctx context.Context, message *Message) (*Message, error) {
@@ -741,4 +802,13 @@ func (s *Server) PedirConfirmacion2(ctx context.Context, message *Message) (*Mes
 		return &message3, nil
 
 	}
+}
+
+func (s *Server) CambiarRA(ctx context.Context, message *Message) (*Message, error) {
+	s.ra = message.Body
+	return &Message{Body: ""}, nil
+}
+
+func (s *Server) ConsultarRA(ctx context.Context, message *Message) (*Message, error) {
+	return &Message{Body: s.ra}, nil
 }

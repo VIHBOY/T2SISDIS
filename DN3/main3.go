@@ -15,6 +15,7 @@ func con() {
 	}
 
 	s := chat.Server{}
+
 	grpcServer := grpc.NewServer()
 
 	chat.RegisterChatServiceServer(grpcServer, &s)
