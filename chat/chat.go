@@ -112,7 +112,7 @@ func (s *Server) PedirConfirmacion(ctx context.Context, message *Message) (*Mess
 	count := 0
 	ganador := int(message.In)
 	var conn *grpc.ClientConn
-	conn, err := grpc.Dial(":9000", grpc.WithInsecure())
+	conn, err := grpc.Dial("dist25:9000", grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("uwu %s", err)
 	}
@@ -121,7 +121,7 @@ func (s *Server) PedirConfirmacion(ctx context.Context, message *Message) (*Mess
 	defer conn.Close()
 
 	var conn2 *grpc.ClientConn
-	conn2, err2 := grpc.Dial(":9001", grpc.WithInsecure())
+	conn2, err2 := grpc.Dial("dist26:9001", grpc.WithInsecure())
 	if err2 != nil {
 		log.Fatalf("uwu %s", err2)
 	}
@@ -129,7 +129,7 @@ func (s *Server) PedirConfirmacion(ctx context.Context, message *Message) (*Mess
 	defer conn2.Close()
 
 	var conn3 *grpc.ClientConn
-	conn3, err3 := grpc.Dial(":9002", grpc.WithInsecure())
+	conn3, err3 := grpc.Dial("dist27:9002", grpc.WithInsecure())
 	if err3 != nil {
 		log.Fatalf("uwu %s", err3)
 	}
@@ -184,7 +184,7 @@ func (s *Server) PedirConfirmacion(ctx context.Context, message *Message) (*Mess
 func (s *Server) Repartir(ctx context.Context, propuesta *Propuesta) (*Message, error) {
 
 	var conn *grpc.ClientConn
-	conn, err := grpc.Dial(":9000", grpc.WithInsecure())
+	conn, err := grpc.Dial("dist25:9000", grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("uwu %s", err)
 	}
@@ -193,7 +193,7 @@ func (s *Server) Repartir(ctx context.Context, propuesta *Propuesta) (*Message, 
 	defer conn.Close()
 
 	var conn2 *grpc.ClientConn
-	conn2, err2 := grpc.Dial(":9001", grpc.WithInsecure())
+	conn2, err2 := grpc.Dial("dist26:9001", grpc.WithInsecure())
 	if err2 != nil {
 		log.Fatalf("uwu %s", err2)
 	}
@@ -202,7 +202,7 @@ func (s *Server) Repartir(ctx context.Context, propuesta *Propuesta) (*Message, 
 	defer conn2.Close()
 
 	var conn3 *grpc.ClientConn
-	conn3, err3 := grpc.Dial(":9002", grpc.WithInsecure())
+	conn3, err3 := grpc.Dial("dist27:9002", grpc.WithInsecure())
 	if err3 != nil {
 		log.Fatalf("uwu %s", err3)
 	}
@@ -231,7 +231,7 @@ func (s *Server) Repartir(ctx context.Context, propuesta *Propuesta) (*Message, 
 func (s *Server) EscribirPropuesta(ctx context.Context, propuesta *Propuesta) (*Message, error) {
 
 	var conn *grpc.ClientConn
-	conn, err := grpc.Dial(":9004", grpc.WithInsecure())
+	conn, err := grpc.Dial("dist28:9004", grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("uwu %s", err)
 	}
@@ -266,7 +266,7 @@ func (s *Server) HelperEscribirPropuesta(ctx context.Context, propuesta *Propues
 func (s *Server) AgregarTitulo(ctx context.Context, message *Message) (*Message, error) {
 
 	var conn3 *grpc.ClientConn
-	conn3, err3 := grpc.Dial(":9004", grpc.WithInsecure())
+	conn3, err3 := grpc.Dial("dist28:9004", grpc.WithInsecure())
 	if err3 != nil {
 		log.Fatalf("uwu %s", err3)
 	}
@@ -290,7 +290,7 @@ func (s *Server) HelperAgregarTitulo(ctx context.Context, message *Message) (*Me
 func (s *Server) VerTitulos(ctx context.Context, message *Message) (*Titulos, error) {
 
 	var conn3 *grpc.ClientConn
-	conn3, err3 := grpc.Dial(":9004", grpc.WithInsecure())
+	conn3, err3 := grpc.Dial("dist28:9004", grpc.WithInsecure())
 	if err3 != nil {
 		log.Fatalf("uwu %s", err3)
 	}
@@ -353,7 +353,7 @@ func (s *Server) ObtenerUbicaciones(ctx context.Context, message *Message) (*Tit
 }
 func (s *Server) BuscarChunks(ctx context.Context, ti *Titulos) (*Message, error) {
 	var conn *grpc.ClientConn
-	conn, err := grpc.Dial(":9000", grpc.WithInsecure())
+	conn, err := grpc.Dial("dist25:9000", grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("uwu %s", err)
 	}
@@ -362,7 +362,7 @@ func (s *Server) BuscarChunks(ctx context.Context, ti *Titulos) (*Message, error
 	defer conn.Close()
 
 	var conn2 *grpc.ClientConn
-	conn2, err2 := grpc.Dial(":9001", grpc.WithInsecure())
+	conn2, err2 := grpc.Dial("dist26:9001", grpc.WithInsecure())
 	if err2 != nil {
 		log.Fatalf("uwu %s", err2)
 	}
@@ -371,7 +371,7 @@ func (s *Server) BuscarChunks(ctx context.Context, ti *Titulos) (*Message, error
 	defer conn2.Close()
 
 	var conn3 *grpc.ClientConn
-	conn3, err3 := grpc.Dial(":9002", grpc.WithInsecure())
+	conn3, err3 := grpc.Dial("dist27:9002", grpc.WithInsecure())
 	if err3 != nil {
 		log.Fatalf("uwu %s", err3)
 	}
