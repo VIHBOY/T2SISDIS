@@ -86,8 +86,9 @@ func do(text string, c chat.ChatServiceClient, c2 chat.ChatServiceClient, c3 cha
 	file, err := os.Open(fileToBeChunked)
 
 	rand.Seed(time.Now().UnixNano())
-
-	chosendn := 1
+	min := 1
+	max := 3
+	chosendn := rand.Intn(max-min) + min
 	/*rand.Intn(max-min) + min*/
 
 	if err != nil {

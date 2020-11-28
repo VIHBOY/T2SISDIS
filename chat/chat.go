@@ -475,7 +475,7 @@ func (s *Server) Unir(ctx context.Context, ti *Message) (*Message, error) {
 	for j := uint64(0); j < totalPartsNum; j++ {
 
 		//read a chunk
-		currentChunkFileName := "Laboratorio_" + strconv.FormatUint(j, 10)
+		currentChunkFileName := ti.Body + "_" + strconv.FormatUint(j, 10)
 
 		newFileChunk, err := os.Open(currentChunkFileName)
 
@@ -547,14 +547,15 @@ func (s *Server) GenerarPropuesta2(ctx context.Context, message *Message) (*Prop
 	if cantidad == 3 {
 		if a[0] == 2 && a[1] == 3 {
 			propuesta.Id1++
-			propuesta.L1 = append(propuesta.L2, int32(0))
+			propuesta.L1 = append(propuesta.L1, int32(0))
 			propuesta.Pos = append(propuesta.Pos, 1)
 			propuesta.Id1++
-			propuesta.L1 = append(propuesta.L2, int32(1))
+			propuesta.L1 = append(propuesta.L1, int32(1))
 			propuesta.Pos = append(propuesta.Pos, 1)
 			propuesta.Id1++
-			propuesta.L1 = append(propuesta.L2, int32(2))
+			propuesta.L1 = append(propuesta.L1, int32(2))
 			propuesta.Pos = append(propuesta.Pos, 1)
+			return &propuesta, nil
 
 		}
 		if a[0] == 2 {
@@ -596,12 +597,22 @@ func (s *Server) GenerarPropuesta2(ctx context.Context, message *Message) (*Prop
 		max := 3
 		chosendn := rand.Intn(max-min+1) + min
 		for {
-			if chosendn == int(a[0]) {
-				chosendn = rand.Intn(max-min+1) + min
+			if len(a) == 2 {
+				if chosendn == int(a[0]) || chosendn == int(a[1]) {
+					chosendn = rand.Intn(max-min+1) + min
+				}
+				if chosendn != int(a[0]) && chosendn != int(a[1]) {
+					break
+				}
+			} else {
+				if chosendn == int(a[0]) {
+					chosendn = rand.Intn(max-min+1) + min
+				}
+				if chosendn != int(a[0]) {
+					break
+				}
 			}
-			if chosendn != int(a[0]) {
-				break
-			}
+
 		}
 		switch chosendn {
 		case 1:
@@ -625,7 +636,6 @@ func (s *Server) GenerarPropuesta2(ctx context.Context, message *Message) (*Prop
 }
 func (s *Server) PedirConfirmacion2(ctx context.Context, message *Message) (*Message, error) {
 	a := message.Nodisponible
-	fmt.Println(a)
 	count := 0
 	ganador := int(message.In)
 
@@ -661,6 +671,11 @@ func (s *Server) PedirConfirmacion2(ctx context.Context, message *Message) (*Mes
 	}
 	message3 := Message{}
 	if ganador == 1 {
+
+		if a[0] == 2 && a[1] == 3 {
+			message3.In = 1
+			return &message3, nil
+		}
 		if a[0] != 2 {
 			responde, _ = c2.SayHello2(context.Background(), &message2)
 			if responde != nil && responde.In == 1 {
@@ -671,7 +686,6 @@ func (s *Server) PedirConfirmacion2(ctx context.Context, message *Message) (*Mes
 		}
 		if a[0] != 3 {
 			responde, _ = c3.SayHello2(context.Background(), &message2)
-			fmt.Println(responde)
 			if responde != nil && responde.In == 1 {
 				count++
 			} else {
