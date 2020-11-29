@@ -28,6 +28,14 @@ type Server struct {
 	ListaChunks []Response
 }
 
+func contains(s []int32, e int32) bool {
+	for _, a := range s {
+		if a == e {
+			return true
+		}
+	}
+	return false
+}
 func (s *Server) SayHello3(ctx context.Context, message *Response) (*Message, error) {
 
 	// write to disk
@@ -113,7 +121,7 @@ func (s *Server) PedirConfirmacion(ctx context.Context, message *Message) (*Mess
 	count := 0
 	ganador := int(message.In)
 	var conn *grpc.ClientConn
-	conn, err := grpc.Dial("dist25:9000", grpc.WithInsecure())
+	conn, err := grpc.Dial(":9000", grpc.WithInsecure())
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -122,7 +130,7 @@ func (s *Server) PedirConfirmacion(ctx context.Context, message *Message) (*Mess
 	defer conn.Close()
 
 	var conn2 *grpc.ClientConn
-	conn2, err2 := grpc.Dial("dist26:9001", grpc.WithInsecure())
+	conn2, err2 := grpc.Dial(":9001", grpc.WithInsecure())
 	if err2 != nil {
 		fmt.Println("uwu")
 
@@ -131,7 +139,7 @@ func (s *Server) PedirConfirmacion(ctx context.Context, message *Message) (*Mess
 	defer conn2.Close()
 
 	var conn3 *grpc.ClientConn
-	conn3, err3 := grpc.Dial("dist27:9002", grpc.WithInsecure())
+	conn3, err3 := grpc.Dial(":9002", grpc.WithInsecure())
 	if err3 != nil {
 		fmt.Println(err)
 	}
@@ -202,7 +210,7 @@ func (s *Server) PedirConfirmacion(ctx context.Context, message *Message) (*Mess
 func (s *Server) Repartir(ctx context.Context, propuesta *Propuesta) (*Message, error) {
 
 	var conn *grpc.ClientConn
-	conn, err := grpc.Dial("dist25:9000", grpc.WithInsecure())
+	conn, err := grpc.Dial(":9000", grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("uwu %s", err)
 	}
@@ -211,7 +219,7 @@ func (s *Server) Repartir(ctx context.Context, propuesta *Propuesta) (*Message, 
 	defer conn.Close()
 
 	var conn2 *grpc.ClientConn
-	conn2, err2 := grpc.Dial("dist26:9001", grpc.WithInsecure())
+	conn2, err2 := grpc.Dial(":9001", grpc.WithInsecure())
 	if err2 != nil {
 		log.Fatalf("uwu %s", err2)
 	}
@@ -220,7 +228,7 @@ func (s *Server) Repartir(ctx context.Context, propuesta *Propuesta) (*Message, 
 	defer conn2.Close()
 
 	var conn3 *grpc.ClientConn
-	conn3, err3 := grpc.Dial("dist27:9002", grpc.WithInsecure())
+	conn3, err3 := grpc.Dial(":9002", grpc.WithInsecure())
 	if err3 != nil {
 		log.Fatalf("uwu %s", err3)
 	}
@@ -247,8 +255,43 @@ func (s *Server) Repartir(ctx context.Context, propuesta *Propuesta) (*Message, 
 	return &Message{Body: ""}, nil
 }
 func (s *Server) EscribirPropuesta(ctx context.Context, propuesta *Propuesta) (*Message, error) {
+
 	var conn *grpc.ClientConn
-	conn, err := grpc.Dial("dist25:9000", grpc.WithInsecure())
+	conn, err := grpc.Dial(":9004", grpc.WithInsecure())
+	if err != nil {
+		log.Fatalf("uwu %s", err)
+	}
+	c := NewChatServiceClient(conn)
+
+	defer conn.Close()
+
+	s.mu.Lock()
+	c.HelperEscribirPropuesta(context.Background(), propuesta)
+	s.mu.Unlock()
+	return &Message{Body: ""}, nil
+}
+func (s *Server) HelperEscribirPropuesta(ctx context.Context, propuesta *Propuesta) (*Message, error) {
+	f, err := os.OpenFile("Log.txt",
+		os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		log.Println(err)
+	}
+	defer f.Close()
+	totalchunks := len(propuesta.L1) + len(propuesta.L2) + len(propuesta.L3)
+	encabezado := propuesta.Titulo + " " + strconv.Itoa(totalchunks)
+	if _, err := f.WriteString(encabezado + "\n"); err != nil {
+		log.Println(err)
+	}
+	for i2, i := range propuesta.Pos {
+		if _, err := f.WriteString(propuesta.Titulo + "_" + strconv.Itoa(i2) + " " + strconv.Itoa(int(i)) + "\n"); err != nil {
+			log.Println(err)
+		}
+	}
+	return &Message{Body: ""}, nil
+}
+func (s *Server) EscribirPropuestaDis(ctx context.Context, propuesta *Propuesta) (*Message, error) {
+	var conn *grpc.ClientConn
+	conn, err := grpc.Dial(":9000", grpc.WithInsecure())
 	fmt.Println(err)
 	if err != nil {
 		log.Fatalf("uwu %s", err)
@@ -258,7 +301,7 @@ func (s *Server) EscribirPropuesta(ctx context.Context, propuesta *Propuesta) (*
 	defer conn.Close()
 
 	var conn2 *grpc.ClientConn
-	conn2, err2 := grpc.Dial("dist26:9001", grpc.WithInsecure())
+	conn2, err2 := grpc.Dial(":9001", grpc.WithInsecure())
 	fmt.Println(err2)
 
 	if err2 != nil {
@@ -269,7 +312,7 @@ func (s *Server) EscribirPropuesta(ctx context.Context, propuesta *Propuesta) (*
 	defer conn2.Close()
 
 	var conn3 *grpc.ClientConn
-	conn3, err3 := grpc.Dial("dist27:9002", grpc.WithInsecure())
+	conn3, err3 := grpc.Dial(":9002", grpc.WithInsecure())
 	fmt.Println(err3)
 
 	if err3 != nil {
@@ -298,7 +341,7 @@ func (s *Server) EscribirPropuesta(ctx context.Context, propuesta *Propuesta) (*
 			c3.CambiarRA(context.Background(), &auxiliar)
 		}
 		var conn4 *grpc.ClientConn
-		conn4, err4 := grpc.Dial("dist28:9004", grpc.WithInsecure())
+		conn4, err4 := grpc.Dial(":9004", grpc.WithInsecure())
 		if err4 != nil {
 			log.Fatalf("uwu %s", err)
 		}
@@ -320,7 +363,7 @@ func (s *Server) EscribirPropuesta(ctx context.Context, propuesta *Propuesta) (*
 
 	return &Message{Body: ""}, nil
 }
-func (s *Server) HelperEscribirPropuesta(ctx context.Context, propuesta *Propuesta) (*Message, error) {
+func (s *Server) HelperEscribirPropuestaDis(ctx context.Context, propuesta *Propuesta) (*Message, error) {
 	s.mu.Lock()
 	f, err := os.OpenFile("Log.txt",
 		os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
@@ -344,7 +387,7 @@ func (s *Server) HelperEscribirPropuesta(ctx context.Context, propuesta *Propues
 func (s *Server) AgregarTitulo(ctx context.Context, message *Message) (*Message, error) {
 
 	var conn3 *grpc.ClientConn
-	conn3, err3 := grpc.Dial("dist28:9004", grpc.WithInsecure())
+	conn3, err3 := grpc.Dial(":9004", grpc.WithInsecure())
 	if err3 != nil {
 		log.Fatalf("uwu %s", err3)
 	}
@@ -368,7 +411,7 @@ func (s *Server) HelperAgregarTitulo(ctx context.Context, message *Message) (*Me
 func (s *Server) VerTitulos(ctx context.Context, message *Message) (*Titulos, error) {
 
 	var conn3 *grpc.ClientConn
-	conn3, err3 := grpc.Dial("dist28:9004", grpc.WithInsecure())
+	conn3, err3 := grpc.Dial(":9004", grpc.WithInsecure())
 	if err3 != nil {
 		log.Fatalf("uwu %s", err3)
 	}
@@ -387,7 +430,6 @@ func (s *Server) HelperVerTitulos(ctx context.Context, message *Message) (*Titul
 
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
-		fmt.Println(scanner.Text())
 		Titulos.Titulos = append(Titulos.Titulos, scanner.Text())
 	}
 
@@ -431,7 +473,7 @@ func (s *Server) ObtenerUbicaciones(ctx context.Context, message *Message) (*Tit
 }
 func (s *Server) BuscarChunks(ctx context.Context, ti *Titulos) (*Message, error) {
 	var conn *grpc.ClientConn
-	conn, err := grpc.Dial("dist25:9000", grpc.WithInsecure())
+	conn, err := grpc.Dial(":9000", grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("uwu %s", err)
 	}
@@ -440,7 +482,7 @@ func (s *Server) BuscarChunks(ctx context.Context, ti *Titulos) (*Message, error
 	defer conn.Close()
 
 	var conn2 *grpc.ClientConn
-	conn2, err2 := grpc.Dial("dist26:9001", grpc.WithInsecure())
+	conn2, err2 := grpc.Dial(":9001", grpc.WithInsecure())
 	if err2 != nil {
 		log.Fatalf("uwu %s", err2)
 	}
@@ -449,7 +491,7 @@ func (s *Server) BuscarChunks(ctx context.Context, ti *Titulos) (*Message, error
 	defer conn2.Close()
 
 	var conn3 *grpc.ClientConn
-	conn3, err3 := grpc.Dial("dist27:9002", grpc.WithInsecure())
+	conn3, err3 := grpc.Dial(":9002", grpc.WithInsecure())
 	if err3 != nil {
 		log.Fatalf("uwu %s", err3)
 	}
@@ -466,13 +508,20 @@ func (s *Server) BuscarChunks(ctx context.Context, ti *Titulos) (*Message, error
 		case 2:
 			fmt.Println("2")
 			chunk, _ := c2.HacerChunks(context.Background(), &Message{Body: a[0]})
-			c.SayHello3(context.Background(), chunk)
+			if chunk == nil {
+				fmt.Println("No se Pudo Obtener " + a[0])
+			} else {
+				c.SayHello3(context.Background(), chunk)
+			}
 
 		case 3:
 			fmt.Println("3")
 			chunk, _ := c3.HacerChunks(context.Background(), &Message{Body: a[0]})
-			c.SayHello3(context.Background(), chunk)
-
+			if chunk == nil {
+				fmt.Println("No se Pudo Obtener " + a[0])
+			} else {
+				c.SayHello3(context.Background(), chunk)
+			}
 		}
 
 	}
@@ -559,7 +608,7 @@ func (s *Server) Unir(ctx context.Context, ti *Message) (*Message, error) {
 		var chunkSize int64 = chunkInfo.Size()
 		chunkBufferBytes := make([]byte, chunkSize)
 
-		fmt.Println("Appending at position : [", writePosition, "] bytes")
+		fmt.Println("Bip Bup Trabajando en  : [", writePosition, "] bytes Bip Bup *Sonidos de robot*")
 		writePosition = writePosition + chunkSize
 
 		// read into chunkBufferBytes
@@ -591,9 +640,9 @@ func (s *Server) Unir(ctx context.Context, ti *Message) (*Message, error) {
 
 		chunkBufferBytes = nil // reset or empty our buffer
 
-		fmt.Println("Written ", n, " bytes")
+		fmt.Println("LLevamos ", n, " bytes Asombroso :o")
 
-		fmt.Println("Recombining part [", j, "] into : ", newFileName)
+		fmt.Println("La parte N°[", j, "] esta siendo añadida al archivo: ", newFileName+" Velocito")
 	}
 
 	// now, we close the newFileName
@@ -602,55 +651,73 @@ func (s *Server) Unir(ctx context.Context, ti *Message) (*Message, error) {
 }
 func (s *Server) GenerarPropuesta2(ctx context.Context, message *Message) (*Propuesta, error) {
 	cantidad := int(message.In)
+	fmt.Println(cantidad)
 	a := message.Nodisponible
 	var propuesta Propuesta
 	if cantidad == 3 {
-		if a[0] == 2 && a[1] == 3 {
-			propuesta.Id1++
-			propuesta.L1 = append(propuesta.L1, int32(0))
-			propuesta.Pos = append(propuesta.Pos, 1)
-			propuesta.Id1++
-			propuesta.L1 = append(propuesta.L1, int32(1))
-			propuesta.Pos = append(propuesta.Pos, 1)
-			propuesta.Id1++
-			propuesta.L1 = append(propuesta.L1, int32(2))
-			propuesta.Pos = append(propuesta.Pos, 1)
-			return &propuesta, nil
+		if len(a) == 2 {
+			if a[0] == 2 && a[1] == 3 {
+				propuesta.Id1++
+				propuesta.L1 = append(propuesta.L1, int32(0))
+				propuesta.Pos = append(propuesta.Pos, 1)
+				propuesta.Id1++
+				propuesta.L1 = append(propuesta.L1, int32(1))
+				propuesta.Pos = append(propuesta.Pos, 1)
+				propuesta.Id1++
+				propuesta.L1 = append(propuesta.L1, int32(2))
+				propuesta.Pos = append(propuesta.Pos, 1)
+				return &propuesta, nil
 
+			}
 		}
-		if a[0] == 2 {
+		if len(a) == 1 {
+			if a[0] == 2 {
+				propuesta.Id1++
+				propuesta.L1 = append(propuesta.L1, int32(0))
+				propuesta.Pos = append(propuesta.Pos, 1)
+				propuesta.Id3++
+				propuesta.L3 = append(propuesta.L3, int32(1))
+				propuesta.Pos = append(propuesta.Pos, 3)
+				propuesta.Id3++
+				propuesta.L3 = append(propuesta.L3, int32(2))
+				propuesta.Pos = append(propuesta.Pos, 3)
+			}
+			if a[0] == 3 {
+				propuesta.Id1++
+				propuesta.L1 = append(propuesta.L1, int32(0))
+				propuesta.Pos = append(propuesta.Pos, 1)
+				propuesta.Id1++
+				propuesta.L1 = append(propuesta.L1, int32(1))
+				propuesta.Pos = append(propuesta.Pos, 1)
+				propuesta.Id2++
+				propuesta.L2 = append(propuesta.L2, int32(2))
+				propuesta.Pos = append(propuesta.Pos, 2)
+			}
+		}
+		if len(a) == 0 {
 			propuesta.Id1++
 			propuesta.L1 = append(propuesta.L1, int32(0))
 			propuesta.Pos = append(propuesta.Pos, 1)
-			propuesta.Id3++
-			propuesta.L3 = append(propuesta.L3, int32(1))
-			propuesta.Pos = append(propuesta.Pos, 3)
+			propuesta.Id2++
+			propuesta.L2 = append(propuesta.L2, int32(1))
+			propuesta.Pos = append(propuesta.Pos, 2)
 			propuesta.Id3++
 			propuesta.L3 = append(propuesta.L3, int32(2))
 			propuesta.Pos = append(propuesta.Pos, 3)
 		}
-		if a[0] == 3 {
-			propuesta.Id1++
-			propuesta.L1 = append(propuesta.L1, int32(0))
-			propuesta.Pos = append(propuesta.Pos, 1)
-			propuesta.Id1++
-			propuesta.L1 = append(propuesta.L1, int32(1))
-			propuesta.Pos = append(propuesta.Pos, 1)
-			propuesta.Id2++
-			propuesta.L2 = append(propuesta.L2, int32(2))
-			propuesta.Pos = append(propuesta.Pos, 2)
-		}
-		/*propuesta.Id1++
-		propuesta.L1 = append(propuesta.L1, int32(0))
-		propuesta.Pos = append(propuesta.Pos, 1)
-		propuesta.Id2++
-		propuesta.L2 = append(propuesta.L2, int32(1))
-		propuesta.Pos = append(propuesta.Pos, 2)
-		propuesta.Id3++
-		propuesta.L3 = append(propuesta.L3, int32(2))
-		propuesta.Pos = append(propuesta.Pos, 3)*/
 		return &propuesta, nil
+
 	}
+
+	/*propuesta.Id1++
+	propuesta.L1 = append(propuesta.L1, int32(0))
+	propuesta.Pos = append(propuesta.Pos, 1)
+	propuesta.Id2++
+	propuesta.L2 = append(propuesta.L2, int32(1))
+	propuesta.Pos = append(propuesta.Pos, 2)
+	propuesta.Id3++
+	propuesta.L3 = append(propuesta.L3, int32(2))
+	propuesta.Pos = append(propuesta.Pos, 3)*/
 	for i := 0; i < cantidad; i++ {
 		rand.Seed(time.Now().UnixNano())
 		min := 1
@@ -664,7 +731,8 @@ func (s *Server) GenerarPropuesta2(ctx context.Context, message *Message) (*Prop
 				if chosendn != int(a[0]) && chosendn != int(a[1]) {
 					break
 				}
-			} else {
+			}
+			if len(a) == 1 {
 				if chosendn == int(a[0]) {
 					chosendn = rand.Intn(max-min+1) + min
 				}
@@ -672,8 +740,12 @@ func (s *Server) GenerarPropuesta2(ctx context.Context, message *Message) (*Prop
 					break
 				}
 			}
+			if len(a) == 0 {
+				break
+			}
 
 		}
+		fmt.Println(chosendn)
 		switch chosendn {
 		case 1:
 			propuesta.Id1++
@@ -694,13 +766,13 @@ func (s *Server) GenerarPropuesta2(ctx context.Context, message *Message) (*Prop
 
 	return &propuesta, nil
 }
-func (s *Server) PedirConfirmacion2(ctx context.Context, message *Message) (*Message, error) {
-	a := message.Nodisponible
+func (s *Server) PedirConfirmacion2(ctx context.Context, message *Propuesta) (*Message, error) {
+	/*a := message.Nodisponible
 	count := 0
 	ganador := int(message.In)
-
+	*/
 	var conn *grpc.ClientConn
-	conn, err := grpc.Dial("dist25:9000", grpc.WithInsecure())
+	conn, err := grpc.Dial(":9000", grpc.WithInsecure())
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -709,7 +781,7 @@ func (s *Server) PedirConfirmacion2(ctx context.Context, message *Message) (*Mes
 	defer conn.Close()
 
 	var conn2 *grpc.ClientConn
-	conn2, err2 := grpc.Dial("dist26:9001", grpc.WithInsecure())
+	conn2, err2 := grpc.Dial(":9001", grpc.WithInsecure())
 	if err2 != nil {
 		fmt.Println("uwu")
 
@@ -718,7 +790,7 @@ func (s *Server) PedirConfirmacion2(ctx context.Context, message *Message) (*Mes
 	defer conn2.Close()
 
 	var conn3 *grpc.ClientConn
-	conn3, err3 := grpc.Dial("dist27:9002", grpc.WithInsecure())
+	conn3, err3 := grpc.Dial(":9002", grpc.WithInsecure())
 	if err3 != nil {
 		fmt.Println(err)
 	}
@@ -730,22 +802,77 @@ func (s *Server) PedirConfirmacion2(ctx context.Context, message *Message) (*Mes
 		Body: "u2u",
 	}
 	message3 := Message{}
-	if ganador == 1 {
+	for _, b := range message.Pos {
+		switch b {
+		case 1:
+			responde, _ = c.SayHello2(context.Background(), &message2)
+			if responde == nil {
+				message3.In = 0
+				b := contains(message3.Nodisponible, int32(1))
+				if b == false {
+					message3.Nodisponible = append(message3.Nodisponible, int32(1))
+				}
+
+			}
+		case 2:
+			responde, _ = c2.SayHello2(context.Background(), &message2)
+			if responde == nil {
+				message3.In = 0
+				b := contains(message3.Nodisponible, int32(2))
+				if b == false {
+					message3.Nodisponible = append(message3.Nodisponible, int32(2))
+				}
+			}
+		case 3:
+			responde, _ = c3.SayHello2(context.Background(), &message2)
+			if responde == nil {
+				message3.In = 0
+				b := contains(message3.Nodisponible, int32(3))
+				if b == false {
+					message3.Nodisponible = append(message3.Nodisponible, int32(3))
+				}
+			}
+		}
+
+	}
+	if len(message3.Nodisponible) > 0 {
+		message3.In = 0
+		return &message3, nil
+	}
+	message3.In = 1
+	return &message3, nil
+	/*if ganador == 1 {
 		if len(a) == 2 {
 			if a[0] == 2 && a[1] == 3 {
 				message3.In = 1
 				return &message3, nil
 			}
 		}
-		if a[0] != 2 {
+		if len(a) == 1 {
+			if a[0] != 2 {
+				responde, _ = c2.SayHello2(context.Background(), &message2)
+				if responde != nil && responde.In == 1 {
+					count++
+				} else {
+					message3.Nodisponible = append(message3.Nodisponible, int32(2))
+				}
+			}
+			if a[0] != 3 {
+				responde, _ = c3.SayHello2(context.Background(), &message2)
+				if responde != nil && responde.In == 1 {
+					count++
+				} else {
+					message3.Nodisponible = append(message3.Nodisponible, int32(3))
+				}
+			}
+		}
+		if len(a) == 0 {
 			responde, _ = c2.SayHello2(context.Background(), &message2)
 			if responde != nil && responde.In == 1 {
 				count++
 			} else {
 				message3.Nodisponible = append(message3.Nodisponible, int32(2))
 			}
-		}
-		if a[0] != 3 {
 			responde, _ = c3.SayHello2(context.Background(), &message2)
 			if responde != nil && responde.In == 1 {
 				count++
@@ -756,15 +883,40 @@ func (s *Server) PedirConfirmacion2(ctx context.Context, message *Message) (*Mes
 
 	}
 	if ganador == 2 {
-		if a[0] != 1 {
+		if len(a) == 2 {
+			if a[0] == 1 && a[1] == 3 {
+				message3.In = 1
+				return &message3, nil
+			}
+		}
+		if len(a) == 1 {
+			if a[0] != 1 {
+				fmt.Println("uwu1")
+				responde, _ = c.SayHello2(context.Background(), &message2)
+				if responde != nil && responde.In == 1 {
+					count++
+				} else {
+					message3.Nodisponible = append(message3.Nodisponible, int32(1))
+				}
+			}
+			if a[0] != 3 {
+				fmt.Println("uwu12")
+
+				responde, _ = c3.SayHello2(context.Background(), &message2)
+				if responde != nil && responde.In == 1 {
+					count++
+				} else {
+					message3.Nodisponible = append(message3.Nodisponible, int32(3))
+				}
+			}
+		}
+		if len(a) == 0 {
 			responde, _ = c.SayHello2(context.Background(), &message2)
 			if responde != nil && responde.In == 1 {
 				count++
 			} else {
-				message3.Nodisponible = append(message3.Nodisponible, int32(1))
+				message3.Nodisponible = append(message3.Nodisponible, int32(2))
 			}
-		}
-		if a[0] != 3 {
 			responde, _ = c3.SayHello2(context.Background(), &message2)
 			if responde != nil && responde.In == 1 {
 				count++
@@ -775,7 +927,37 @@ func (s *Server) PedirConfirmacion2(ctx context.Context, message *Message) (*Mes
 
 	}
 	if ganador == 3 {
-		if a[0] != 1 {
+		if len(a) == 2 {
+			if a[0] == 2 && a[1] == 3 {
+				message3.In = 1
+				return &message3, nil
+			}
+		}
+		if len(a) == 1 {
+			if a[0] != 2 {
+				responde, _ = c2.SayHello2(context.Background(), &message2)
+				if responde != nil && responde.In == 1 {
+					count++
+				} else {
+					message3.Nodisponible = append(message3.Nodisponible, int32(2))
+				}
+			}
+			if a[0] != 1 {
+				responde, _ = c.SayHello2(context.Background(), &message2)
+				if responde != nil && responde.In == 1 {
+					count++
+				} else {
+					message3.Nodisponible = append(message3.Nodisponible, int32(1))
+				}
+			}
+		}
+		if len(a) == 0 {
+			responde, _ = c2.SayHello2(context.Background(), &message2)
+			if responde != nil && responde.In == 1 {
+				count++
+			} else {
+				message3.Nodisponible = append(message3.Nodisponible, int32(2))
+			}
 			responde, _ = c.SayHello2(context.Background(), &message2)
 			if responde != nil && responde.In == 1 {
 				count++
@@ -783,17 +965,9 @@ func (s *Server) PedirConfirmacion2(ctx context.Context, message *Message) (*Mes
 				message3.Nodisponible = append(message3.Nodisponible, int32(1))
 			}
 		}
-		if a[0] != 2 {
-			responde, _ = c2.SayHello2(context.Background(), &message2)
-			if responde != nil && responde.In == 1 {
-				count++
-			} else {
-				message3.Nodisponible = append(message3.Nodisponible, int32(2))
-			}
-		}
 
 	}
-
+	fmt.Println(count)
 	if count == 2-len(a) {
 		message3.In = 1
 		return &message3, nil
@@ -801,7 +975,27 @@ func (s *Server) PedirConfirmacion2(ctx context.Context, message *Message) (*Mes
 		message3.In = 0
 		return &message3, nil
 
+	}*/
+}
+func (s *Server) PedirConfirmacionNM(ctx context.Context, message *Propuesta) (*Message, error) {
+	var conn4 *grpc.ClientConn
+	conn4, err := grpc.Dial(":9004", grpc.WithInsecure())
+	if err != nil {
+		fmt.Println(err)
 	}
+	c4 := NewChatServiceClient(conn4)
+	defer conn4.Close()
+
+	message2 := Message{
+		Body: "u2u",
+	}
+	r, _ := c4.SayHello2(context.Background(), &message2)
+	if r.In == 1 {
+		return &Message{In: 1}, nil
+	} else {
+		return &Message{In: 0}, nil
+	}
+
 }
 
 func (s *Server) CambiarRA(ctx context.Context, message *Message) (*Message, error) {

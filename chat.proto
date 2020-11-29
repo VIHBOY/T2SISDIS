@@ -16,7 +16,10 @@ message Propuesta{
     repeated int32 l3=6;
     repeated int32 pos=7;
     string titulo=8; 
-    string chosendn=9;
+    repeated int32 nodisponible=9;
+    int32 in=10;
+    string chosendn=11;
+
 }
 message Titulos{
     repeated string titulos=1;
@@ -40,6 +43,8 @@ service ChatService{
     rpc SayHello3(Response) returns (Message){};
     rpc EscribirPropuesta(Propuesta) returns(Message){};
     rpc HelperEscribirPropuesta(Propuesta) returns(Message){};
+    rpc EscribirPropuestaDis(Propuesta) returns(Message){};
+    rpc HelperEscribirPropuestaDis(Propuesta) returns(Message){};
     rpc AgregarTitulo(Message) returns(Message){};
     rpc HelperAgregarTitulo(Message) returns(Message){};
     rpc VerTitulos(Message) returns(Titulos){};
@@ -49,7 +54,9 @@ service ChatService{
     rpc HacerChunks(Message) returns(Response){};
     rpc Unir(Message) returns(Message){};
     rpc GenerarPropuesta2(Message) returns (Propuesta){};
-    rpc PedirConfirmacion2(Message) returns (Message){};
+    rpc PedirConfirmacion2( Propuesta) returns (Message){};
+    rpc PedirConfirmacionNM(Propuesta) returns (Message){};
     rpc CambiarRA(Message) returns (Message){};
     rpc ConsultarRA(Message) returns (Message){};
+
 }

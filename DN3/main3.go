@@ -9,13 +9,12 @@ import (
 )
 
 func con() {
-	lis, err := net.Listen("tcp", "dist27:9002")
+	lis, err := net.Listen("tcp", ":9002")
 	if err != nil {
 		log.Fatalf("Failed to listen: %v", err)
 	}
 
 	s := chat.Server{}
-
 	grpcServer := grpc.NewServer()
 
 	chat.RegisterChatServiceServer(grpcServer, &s)
