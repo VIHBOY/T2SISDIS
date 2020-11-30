@@ -25,6 +25,8 @@ type Server struct {
 	w2          int
 	w3          int
 	ra          string
+	ListaFile   []int
+	EstadoFile  int
 	ListaChunks []Response
 }
 
@@ -1017,4 +1019,51 @@ func (s *Server) CambiarRA(ctx context.Context, message *Message) (*Message, err
 
 func (s *Server) ConsultarRA(ctx context.Context, message *Message) (*Message, error) {
 	return &Message{Body: s.ra}, nil
+}
+func (s *Server) AgregarLista(ctx context.Context, message *Message) (*Message, error) {
+	s.ListaFile = append(s.ListaFile, int(message.In))
+	return &Message{Body: ""}, nil
+
+}
+func (s *Server) EscribirPropuestaCen(ctx context.Context, propuesta *Propuesta) (*Message, error) {
+	var conn *grpc.ClientConn
+	conn, err := grpc.Dial(":9004", grpc.WithInsecure())
+	fmt.Println(err)
+	if err != nil {
+		log.Fatalf("uwu %s", err)
+	}
+	defer conn.Close()
+
+	/*for {
+		im, _ := c4.GetListAppend(context.Background(), &me)
+		es, _ := c4.GetEstadoFileCen(context.Background(), &me)
+		if im.In == 0 && es.In == 0 {
+			s.mu.Lock()
+			c4.EstadoFileCen(context.Background(), &Message{In: 1})
+			c4.HelperEscribirPropuesta(context.Background(), propuesta)
+			c4.EstadoFileCen(context.Background(), &Message{In: 0})
+			s.mu.Unlock()
+		}
+		if es.In == 1 {
+			s.mu.Lock()
+			c4.ListAppend(context.Background(), &Message{In: 1})
+			s.mu.Unlock()
+		}
+	}*/
+
+	return &Message{Body: ""}, nil
+}
+func (s *Server) EstadoFileCen(ctx context.Context, me *Message) (*Message, error) {
+	s.EstadoFile = int(me.In)
+	return &Message{Body: ""}, nil
+}
+func (s *Server) GetEstadoFileCen(ctx context.Context, me *Message) (*Message, error) {
+	return &Message{In: int32(s.EstadoFile)}, nil
+}
+func (s *Server) ListAppend(ctx context.Context, me *Message) (*Message, error) {
+	s.ListaFile = append(s.ListaFile, int(me.In))
+	return &Message{Body: ""}, nil
+}
+func (s *Server) GetListAppend(ctx context.Context, me *Message) (*Message, error) {
+	return &Message{In: int32(len(s.ListaFile))}, nil
 }

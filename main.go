@@ -548,15 +548,38 @@ func main() {
 		fmt.Println("Menú")
 		fmt.Println("")
 		reader := bufio.NewReader(os.Stdin)
-		fmt.Println("Ingrese Archivo a subir")
-		fmt.Println("")
+		fmt.Println("Ingrese que desea hacer")
+		fmt.Println("1. Subir")
+		fmt.Println("2. Bajar")
 		text, _ := reader.ReadString('\n')
 		// convert CRLF to LF
 		text = strings.Replace(text, "\n", "", -1)
-		fmt.Println("")
-		fmt.Println("Subiendo:" + text + ".pdf")
-		do(text, c, c2, c3)
-		do2(text, c, c2, c3)
+		switch text {
+		case "1":
+			fmt.Println("Ingrese Algoritmo a usar")
+			fmt.Println("1. Distribuido")
+			fmt.Println("2. Centralizado")
+			text2, _ := reader.ReadString('\n')
+			// convert CRLF to LF
+			text3 := strings.Replace(text2, "\n", "", -1)
+			switch text3 {
+			case "1":
+				fmt.Println("Ingrese Nombre de archivo")
+				text2, _ := reader.ReadString('\n')
+				// convert CRLF to LF
+				text3 = strings.Replace(text2, "\n", "", -1)
+				do(text3, c, c2, c3)
+			case "2":
+				fmt.Println("Ingrese Nombre de archivo")
+				text2, _ := reader.ReadString('\n')
+				// convert CRLF to LF
+				text3 = strings.Replace(text2, "\n", "", -1)
+				do3(text3, c, c2, c3)
+			}
+		case "2":
+
+			do2(text, c, c2, c3)
+		}
 
 	}
 
