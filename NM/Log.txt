@@ -1,4 +1,0 @@
-Laboratorio 3
-Laboratorio_0 1
-Laboratorio_1 2
-Laboratorio_2 3

@@ -58,9 +58,5 @@ service ChatService{
     rpc PedirConfirmacionNM(Propuesta) returns (Message){};
     rpc CambiarRA(Message) returns (Message){};
     rpc ConsultarRA(Message) returns (Message){};
-    rpc EscribirPropuestaCen(Propuesta) returns (Message){};
-    rpc EstadoFileCen(Message)returns(Message){};
-    rpc ListAppend(Message)returns(Message){};
-    rpc GetListAppend(Message)returns(Message){};
-    rpc GetEstadoFileCen(Message)returns(Message){};
+
 }

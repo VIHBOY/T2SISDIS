@@ -16,20 +16,43 @@ import (
 	grpc "google.golang.org/grpc"
 )
 
+//Server is
+/***
+* struct Server
+**
+* Estructura de server
+**
+* Fields:
+* sync.Mutex mu : Herramienta para sincronizacion
+* int id1 : Id del DataNode1
+* int id2 : Id del DataNode2
+* int id3 : Id del DataNode3
+* string ra : Estado del datanode con respecto a ocupar la zona critica
+* []Response ListaChunks : Lista de chunks del datanode
+***/
 type Server struct {
 	mu          sync.Mutex
 	id1         int
 	id2         int
 	id3         int
-	w1          int
-	w2          int
-	w3          int
 	ra          string
-	ListaFile   []int
-	EstadoFile  int
 	ListaChunks []Response
 }
 
+//contains is
+/***
+* func contains
+**
+* Verifica si en una lista ya existe un item en especfico
+**
+* Input:
+* []int32 s : Lista cualquiera
+* int32 e : Item a verificar
+*
+**
+* Output:
+* bool : retorna true o false, dependiendo de si existe o no el elemento
+***/
 func contains(s []int32, e int32) bool {
 	for _, a := range s {
 		if a == e {
@@ -38,6 +61,22 @@ func contains(s []int32, e int32) bool {
 	}
 	return false
 }
+
+//SayHello3 is
+/***
+* func SayHello3
+**
+* Recibe un chunk y lo escribe en un archivo
+**
+* Input:
+* context.Context ctx : Contexto de alguna coneccion
+* *Response message : Mensaje con estructura de tipo Response
+*
+**
+* Output:
+* *Message : Mensaje con estructura de tipo Message
+* error : Constante nil
+***/
 func (s *Server) SayHello3(ctx context.Context, message *Response) (*Message, error) {
 
 	// write to disk
@@ -56,6 +95,22 @@ func (s *Server) SayHello3(ctx context.Context, message *Response) (*Message, er
 
 	return &Message{Body: ""}, nil
 }
+
+//SayHello is
+/***
+* func SayHello
+**
+* Agrega un chunk a la lista de chunks
+**
+* Input:
+* context.Context ctx : Contexto de alguna coneccion
+* *Response message : Mensaje con estructura de tipo Response
+*
+**
+* Output:
+* *Message : Mensaje con estructura de tipo Message
+* error : Constante nil
+***/
 func (s *Server) SayHello(ctx context.Context, message *Response) (*Message, error) {
 
 	// write to disk
@@ -73,12 +128,43 @@ func (s *Server) SayHello(ctx context.Context, message *Response) (*Message, err
 	return &Message{Body: ""}, nil
 }
 
+//SayHello2 is
+/***
+* func SayHello2
+**
+* Imprime un confirmar y retorna un 1 en el cuerpo del request
+**
+* Input:
+* context.Context ctx : Contexto de alguna coneccion
+* *Response message : Mensaje con estructura de tipo Response
+*
+**
+* Output:
+* *Message : Mensaje con estructura de tipo Message
+* error : Constante nil
+***/
 func (s *Server) SayHello2(ctx context.Context, message *Message) (*Message, error) {
 	// write to disk
 	fmt.Println("Confirmas?")
 
 	return &Message{In: 1}, nil
 }
+
+//GenerarPropuesta is
+/***
+* func GenerarPropuesta
+**
+* Genera una propuesta de distribucion de forma aleatoria
+**
+* Input:
+* context.Context ctx : Contexto de alguna coneccion
+* *Response message : Mensaje con estructura de tipo Response
+*
+**
+* Output:
+* *Propuesta : Mensaje con estructura de tipo Propuesta
+* error : Constante nil
+***/
 func (s *Server) GenerarPropuesta(ctx context.Context, message *Message) (*Propuesta, error) {
 	cantidad := int(message.In)
 	var propuesta Propuesta
@@ -119,6 +205,22 @@ func (s *Server) GenerarPropuesta(ctx context.Context, message *Message) (*Propu
 
 	return &propuesta, nil
 }
+
+//PedirConfirmacion is
+/***
+* func PedirConfirmacion
+**
+* Pide confirmar la propuesta a todos los datanodes
+**
+* Input:
+* context.Context ctx : Contexto de alguna coneccion
+* *Response message : Mensaje con estructura de tipo Response
+*
+**
+* Output:
+* *Message : Mensaje con estructura de tipo Message
+* error : Constante nil
+***/
 func (s *Server) PedirConfirmacion(ctx context.Context, message *Message) (*Message, error) {
 	count := 0
 	ganador := int(message.In)
@@ -201,14 +303,27 @@ func (s *Server) PedirConfirmacion(ctx context.Context, message *Message) (*Mess
 
 	if count == 2 {
 		message3.In = 1
-		return &message3, nil
 	} else {
 		message3.In = 0
-		return &message3, nil
-
 	}
+	return &message3, nil
 }
 
+//Repartir is
+/***
+* func Repartir
+**
+* Reparte los chunks a partir de la propuesta
+**
+* Input:
+* context.Context ctx : Contexto de alguna coneccion
+* *Propuesta propuesta : Mensaje con estructura de tipo Propuesta
+*
+**
+* Output:
+* *Message : Mensaje con estructura de tipo Message
+* error : Constante nil
+***/
 func (s *Server) Repartir(ctx context.Context, propuesta *Propuesta) (*Message, error) {
 
 	var conn *grpc.ClientConn
@@ -256,6 +371,22 @@ func (s *Server) Repartir(ctx context.Context, propuesta *Propuesta) (*Message, 
 	s.mu.Unlock()
 	return &Message{Body: ""}, nil
 }
+
+//EscribirPropuesta is
+/***
+* func EscribirPropuesta
+**
+* Escribe la propuesta generada en el log del NameNode
+**
+* Input:
+* context.Context ctx : Contexto de alguna coneccion
+* *Propuesta propuesta : Mensaje con estructura de tipo Propuesta
+*
+**
+* Output:
+* *Message : Mensaje con estructura de tipo Message
+* error : Constante nil
+***/
 func (s *Server) EscribirPropuesta(ctx context.Context, propuesta *Propuesta) (*Message, error) {
 
 	var conn *grpc.ClientConn
@@ -272,6 +403,22 @@ func (s *Server) EscribirPropuesta(ctx context.Context, propuesta *Propuesta) (*
 	s.mu.Unlock()
 	return &Message{Body: ""}, nil
 }
+
+//HelperEscribirPropuesta is
+/***
+* func HelperEscribirPropuesta
+**
+* Funcion de ayuda para escribir la propuesta generada en el log del NameNode
+**
+* Input:
+* context.Context ctx : Contexto de alguna coneccion
+* *Propuesta propuesta : Mensaje con estructura de tipo Propuesta
+*
+**
+* Output:
+* *Message : Mensaje con estructura de tipo Message
+* error : Constante nil
+***/
 func (s *Server) HelperEscribirPropuesta(ctx context.Context, propuesta *Propuesta) (*Message, error) {
 	f, err := os.OpenFile("Log.txt",
 		os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
@@ -291,6 +438,23 @@ func (s *Server) HelperEscribirPropuesta(ctx context.Context, propuesta *Propues
 	}
 	return &Message{Body: ""}, nil
 }
+
+//EscribirPropuestaDis is
+/***
+* func EscribirPropuestaDis
+**
+* Escribe la propuesta generada en el log del NameNode,
+* utilizando el algoritmo de Ricart y Agrawala
+**
+* Input:
+* context.Context ctx : Contexto de alguna coneccion
+* *Propuesta propuesta : Mensaje con estructura de tipo Propuesta
+*
+**
+* Output:
+* *Message : Mensaje con estructura de tipo Message
+* error : Constante nil
+***/
 func (s *Server) EscribirPropuestaDis(ctx context.Context, propuesta *Propuesta) (*Message, error) {
 	var conn *grpc.ClientConn
 	conn, err := grpc.Dial(":9000", grpc.WithInsecure())
@@ -378,6 +542,23 @@ func (s *Server) EscribirPropuestaDis(ctx context.Context, propuesta *Propuesta)
 
 	return &Message{Body: ""}, nil
 }
+
+//HelperEscribirPropuestaDis is
+/***
+* func HelperEscribirPropuestaDis
+**
+* Funcion de ayuda para escribir la propuesta generada en el log del NameNode
+* en base al algoritmo de Ricart y Agrawala
+**
+* Input:
+* context.Context ctx : Contexto de alguna coneccion
+* *Propuesta propuesta : Mensaje con estructura de tipo Propuesta
+*
+**
+* Output:
+* *Message : Mensaje con estructura de tipo Message
+* error : Constante nil
+***/
 func (s *Server) HelperEscribirPropuestaDis(ctx context.Context, propuesta *Propuesta) (*Message, error) {
 	f, err := os.OpenFile("Log.txt",
 		os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
@@ -397,6 +578,22 @@ func (s *Server) HelperEscribirPropuestaDis(ctx context.Context, propuesta *Prop
 	}
 	return &Message{Body: ""}, nil
 }
+
+//AgregarTitulo is
+/***
+* func AgregarTitulo
+**
+* Agrega libro al log de titulos del NameNode
+**
+* Input:
+* context.Context ctx : Contexto de alguna coneccion
+* *Message message : Mensaje con estructura de tipo Message
+*
+**
+* Output:
+* *Message : Mensaje con estructura de tipo Message
+* error : Constante nil
+***/
 func (s *Server) AgregarTitulo(ctx context.Context, message *Message) (*Message, error) {
 
 	var conn3 *grpc.ClientConn
@@ -409,6 +606,22 @@ func (s *Server) AgregarTitulo(ctx context.Context, message *Message) (*Message,
 	c4.HelperAgregarTitulo(context.Background(), message)
 	return &Message{Body: ""}, nil
 }
+
+//HelperAgregarTitulo is
+/***
+* func HelperAgregarTitulo
+**
+* Funcion de ayuda para agregar libros al log de titulos del NameNode
+**
+* Input:
+* context.Context ctx : Contexto de alguna coneccion
+* *Message message : Mensaje con estructura de tipo Message
+*
+**
+* Output:
+* *Message : Mensaje con estructura de tipo Message
+* error : Constante nil
+***/
 func (s *Server) HelperAgregarTitulo(ctx context.Context, message *Message) (*Message, error) {
 	f, err := os.OpenFile("Titulos.txt",
 		os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
@@ -421,6 +634,22 @@ func (s *Server) HelperAgregarTitulo(ctx context.Context, message *Message) (*Me
 	}
 	return &Message{Body: ""}, nil
 }
+
+//VerTitulos is
+/***
+* func VerTitulos
+**
+* Muestra todos los libros del log de titulos del NameNode
+**
+* Input:
+* context.Context ctx : Contexto de alguna coneccion
+* *Message message : Mensaje con estructura de tipo Message
+*
+**
+* Output:
+* *Titulos : Mensaje con estructura de tipo Titulos
+* error : Constante nil
+***/
 func (s *Server) VerTitulos(ctx context.Context, message *Message) (*Titulos, error) {
 
 	var conn3 *grpc.ClientConn
@@ -433,6 +662,22 @@ func (s *Server) VerTitulos(ctx context.Context, message *Message) (*Titulos, er
 	Titulos, _ := c4.HelperVerTitulos(context.Background(), message)
 	return Titulos, nil
 }
+
+//HelperVerTitulos is
+/***
+* func HelperVerTitulos
+**
+* Funcion de ayuda para mostrar todos los libros del log de titulos del NameNode
+**
+* Input:
+* context.Context ctx : Contexto de alguna coneccion
+* *Message message : Mensaje con estructura de tipo Message
+*
+**
+* Output:
+* *Titulos : Mensaje con estructura de tipo Titulos
+* error : Constante nil
+***/
 func (s *Server) HelperVerTitulos(ctx context.Context, message *Message) (*Titulos, error) {
 	var Titulos Titulos
 	file, err := os.Open("Titulos.txt")
@@ -451,8 +696,24 @@ func (s *Server) HelperVerTitulos(ctx context.Context, message *Message) (*Titul
 	}
 	return &Titulos, nil
 }
+
+//ObtenerUbicaciones is
+/***
+* func ObtenerUbicaciones
+**
+* Obtiene las ubicaciones de los chunks
+**
+* Input:
+* context.Context ctx : Contexto de alguna coneccion
+* *Message message : Mensaje con estructura de tipo Message
+*
+**
+* Output:
+* *Titulos : Mensaje con estructura de tipo Titulos
+* error : Constante nil
+***/
 func (s *Server) ObtenerUbicaciones(ctx context.Context, message *Message) (*Titulos, error) {
-	titulo_a_buscar := message.Body
+	tituloabuscar := message.Body
 	var Titulos Titulos
 	file, err := os.Open("Log.txt")
 	if err != nil {
@@ -468,7 +729,7 @@ func (s *Server) ObtenerUbicaciones(ctx context.Context, message *Message) (*Tit
 	}
 	for c, b := range lines {
 		a := strings.Split(b, " ")
-		if a[0] == titulo_a_buscar {
+		if a[0] == tituloabuscar {
 			linea = c
 			i2, _ = strconv.Atoi(a[1])
 
@@ -484,6 +745,22 @@ func (s *Server) ObtenerUbicaciones(ctx context.Context, message *Message) (*Tit
 	return &Titulos, nil
 
 }
+
+//BuscarChunks is
+/***
+* func BuscarChunks
+**
+* Busca los chunks en los DataNodes
+**
+* Input:
+* context.Context ctx : Contexto de alguna coneccion
+* *Titulos ti : Mensaje con estructura de tipo Titulos
+*
+**
+* Output:
+* *Message : Mensaje con estructura de tipo Message
+* error : Constante nil
+***/
 func (s *Server) BuscarChunks(ctx context.Context, ti *Titulos) (*Message, error) {
 	var conn *grpc.ClientConn
 	conn, err := grpc.Dial(":9000", grpc.WithInsecure())
@@ -543,6 +820,22 @@ func (s *Server) BuscarChunks(ctx context.Context, ti *Titulos) (*Message, error
 	return &Message{Body: ""}, nil
 
 }
+
+//HacerChunks is
+/***
+* func HacerChunks
+**
+* Crea chunks en base a una estructura de tipo Message
+**
+* Input:
+* context.Context ctx : Contexto de alguna coneccion
+* *Message ti : Mensaje con estructura de tipo Message
+*
+**
+* Output:
+* *Response : Mensaje con estructura de tipo Response
+* error : Constante nil
+***/
 func (s *Server) HacerChunks(ctx context.Context, ti *Message) (*Response, error) {
 	file, err := os.Open(ti.Body)
 	a := strings.Split(ti.Body, "_")
@@ -565,6 +858,22 @@ func (s *Server) HacerChunks(ctx context.Context, ti *Message) (*Response, error
 	fmt.Println(chunkBufferBytes)
 	return &message, nil
 }
+
+//Unir is
+/***
+* func Unir
+**
+* Busca chunks y los une en un archivo
+**
+* Input:
+* context.Context ctx : Contexto de alguna coneccion
+* *Message ti : Mensaje con estructura de tipo Message
+*
+**
+* Output:
+* *Message : Mensaje con estructura de tipo Message
+* error : Constante nil
+***/
 func (s *Server) Unir(ctx context.Context, ti *Message) (*Message, error) {
 	totalPartsNum := uint64(ti.In)
 
@@ -662,6 +971,23 @@ func (s *Server) Unir(ctx context.Context, ti *Message) (*Message, error) {
 	file.Close()
 	return &Message{Body: ""}, nil
 }
+
+//GenerarPropuesta2 is
+/***
+* func GenerarPropuesta2
+**
+* Genera una segunda propuesta de distribucion
+* sin considerar los nodos caidos
+**
+* Input:
+* context.Context ctx : Contexto de alguna coneccion
+* *Message message : Mensaje con estructura de tipo Message
+*
+**
+* Output:
+* *Propuesta : Mensaje con estructura de tipo Propuesta
+* error : Constante nil
+***/
 func (s *Server) GenerarPropuesta2(ctx context.Context, message *Message) (*Propuesta, error) {
 	cantidad := int(message.In)
 	fmt.Println(cantidad)
@@ -779,6 +1105,22 @@ func (s *Server) GenerarPropuesta2(ctx context.Context, message *Message) (*Prop
 
 	return &propuesta, nil
 }
+
+//PedirConfirmacion2 is
+/***
+* func PedirConfirmacion2
+**
+* Pide confirmar distribución sin considerar los nodos caidos
+**
+* Input:
+* context.Context ctx : Contexto de alguna coneccion
+* *Propuesta message : Mensaje con estructura de tipo Propuesta
+*
+**
+* Output:
+* *Message : Mensaje con estructura de tipo Message
+* error : Constante nil
+***/
 func (s *Server) PedirConfirmacion2(ctx context.Context, message *Propuesta) (*Message, error) {
 	/*a := message.Nodisponible
 	count := 0
@@ -990,6 +1332,22 @@ func (s *Server) PedirConfirmacion2(ctx context.Context, message *Propuesta) (*M
 
 	}*/
 }
+
+//PedirConfirmacionNM is
+/***
+* func PedirConfirmacionNM
+**
+* Pide confirmar distribución al NameNode
+**
+* Input:
+* context.Context ctx : Contexto de alguna coneccion
+* *Propuesta message : Mensaje con estructura de tipo Propuesta
+*
+**
+* Output:
+* *Message : Mensaje con estructura de tipo Message
+* error : Constante nil
+***/
 func (s *Server) PedirConfirmacionNM(ctx context.Context, message *Propuesta) (*Message, error) {
 	var conn4 *grpc.ClientConn
 	conn4, err := grpc.Dial(":9004", grpc.WithInsecure())
@@ -1005,65 +1363,49 @@ func (s *Server) PedirConfirmacionNM(ctx context.Context, message *Propuesta) (*
 	r, _ := c4.SayHello2(context.Background(), &message2)
 	if r.In == 1 {
 		return &Message{In: 1}, nil
-	} else {
-		return &Message{In: 0}, nil
 	}
+	return &Message{In: 0}, nil
 
 }
 
+//CambiarRA is
+/***
+* func CambiarRA
+**
+* Cambia el estado del DataNode, especificando si este
+* se encuentra en una zona critica o no
+**
+* Input:
+* context.Context ctx : Contexto de alguna coneccion
+* *Message message : Mensaje con estructura de tipo Message
+*
+**
+* Output:
+* *Message : Mensaje con estructura de tipo Message
+* error : Constante nil
+***/
 func (s *Server) CambiarRA(ctx context.Context, message *Message) (*Message, error) {
 	s.ra = message.Body
 	fmt.Println(message.Body)
 	return &Message{Body: message.Body}, nil
 }
 
+//ConsultarRA is
+/***
+* func ConsultarRA
+**
+* Consulta el estado del DataNode, especificando si este
+* se encuentra en una zona critica o no
+**
+* Input:
+* context.Context ctx : Contexto de alguna coneccion
+* *Message message : Mensaje con estructura de tipo Message
+*
+**
+* Output:
+* *Message : Mensaje con estructura de tipo Message
+* error : Constante nil
+***/
 func (s *Server) ConsultarRA(ctx context.Context, message *Message) (*Message, error) {
 	return &Message{Body: s.ra}, nil
-}
-func (s *Server) AgregarLista(ctx context.Context, message *Message) (*Message, error) {
-	s.ListaFile = append(s.ListaFile, int(message.In))
-	return &Message{Body: ""}, nil
-
-}
-func (s *Server) EscribirPropuestaCen(ctx context.Context, propuesta *Propuesta) (*Message, error) {
-	var conn *grpc.ClientConn
-	conn, err := grpc.Dial(":9004", grpc.WithInsecure())
-	fmt.Println(err)
-	if err != nil {
-		log.Fatalf("uwu %s", err)
-	}
-	defer conn.Close()
-
-	/*for {
-		im, _ := c4.GetListAppend(context.Background(), &me)
-		es, _ := c4.GetEstadoFileCen(context.Background(), &me)
-		if im.In == 0 && es.In == 0 {
-			s.mu.Lock()
-			c4.EstadoFileCen(context.Background(), &Message{In: 1})
-			c4.HelperEscribirPropuesta(context.Background(), propuesta)
-			c4.EstadoFileCen(context.Background(), &Message{In: 0})
-			s.mu.Unlock()
-		}
-		if es.In == 1 {
-			s.mu.Lock()
-			c4.ListAppend(context.Background(), &Message{In: 1})
-			s.mu.Unlock()
-		}
-	}*/
-
-	return &Message{Body: ""}, nil
-}
-func (s *Server) EstadoFileCen(ctx context.Context, me *Message) (*Message, error) {
-	s.EstadoFile = int(me.In)
-	return &Message{Body: ""}, nil
-}
-func (s *Server) GetEstadoFileCen(ctx context.Context, me *Message) (*Message, error) {
-	return &Message{In: int32(s.EstadoFile)}, nil
-}
-func (s *Server) ListAppend(ctx context.Context, me *Message) (*Message, error) {
-	s.ListaFile = append(s.ListaFile, int(me.In))
-	return &Message{Body: ""}, nil
-}
-func (s *Server) GetListAppend(ctx context.Context, me *Message) (*Message, error) {
-	return &Message{In: int32(len(s.ListaFile))}, nil
 }
