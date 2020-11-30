@@ -505,19 +505,9 @@ func do(text string, c chat.ChatServiceClient, c2 chat.ChatServiceClient, c3 cha
 
 func main() {
 	go con()
+
 	var iniciar chat.Message
 	iniciar.Body = "0"
-
-	var conn *grpc.ClientConn
-	conn, err := grpc.Dial(":9000", grpc.WithInsecure())
-	fmt.Println(err)
-	if err != nil {
-		log.Fatalf("uwu %s", err)
-	}
-	c := chat.NewChatServiceClient(conn)
-	c.CambiarRA(context.Background(), &iniciar)
-
-	defer conn.Close()
 
 	var conn2 *grpc.ClientConn
 	conn2, err2 := grpc.Dial(":9001", grpc.WithInsecure())
@@ -530,6 +520,17 @@ func main() {
 	c2.CambiarRA(context.Background(), &iniciar)
 
 	defer conn2.Close()
+
+	var conn *grpc.ClientConn
+	conn, err := grpc.Dial(":9000", grpc.WithInsecure())
+	fmt.Println(err)
+	if err != nil {
+		log.Fatalf("uwu %s", err)
+	}
+	c := chat.NewChatServiceClient(conn)
+	c.CambiarRA(context.Background(), &iniciar)
+
+	defer conn.Close()
 
 	var conn3 *grpc.ClientConn
 	conn3, err3 := grpc.Dial(":9002", grpc.WithInsecure())
