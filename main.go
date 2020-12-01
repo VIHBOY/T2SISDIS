@@ -73,9 +73,8 @@ func do3(text string, c chat.ChatServiceClient, c2 chat.ChatServiceClient, c3 ch
 	titulo := text
 	file, err := os.Open(fileToBeChunked)
 	rand.Seed(time.Now().UnixNano())
-	min := 0
 	max := len(Sidisponible2)
-	chosendn := Sidisponible2[rand.Intn(max-min)+min]
+	chosendn := Sidisponible2[rand.Intn(max)]
 	/*rand.Intn(max-min) + min*/
 
 	if err != nil {
@@ -320,9 +319,8 @@ func do(text string, c chat.ChatServiceClient, c2 chat.ChatServiceClient, c3 cha
 	titulo := text
 	file, err := os.Open(fileToBeChunked)
 	rand.Seed(time.Now().UnixNano())
-	/*min := 0
-	max := len(Sidisponible2)*/
-	chosendn := 2
+	max := len(Sidisponible2)
+	chosendn := Sidisponible2[rand.Intn(max)]
 	/*rand.Intn(max-min) + min*/
 
 	if err != nil {

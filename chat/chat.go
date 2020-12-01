@@ -491,52 +491,153 @@ func (s *Server) EscribirPropuestaDis(ctx context.Context, propuesta *Propuesta)
 	var respuesta1 *Message
 	var respuesta2 *Message
 	var respuesta3 *Message
+	Nodisponible2 := []int32{}
+	Sidisponible2 := []int32{}
 
-	respuesta1, _ = c.ConsultarRA(context.Background(), &auxiliar)
-	respuesta2, _ = c2.ConsultarRA(context.Background(), &auxiliar)
-	respuesta3, _ = c3.ConsultarRA(context.Background(), &auxiliar)
+	message2 := Message{
+		Body: "u2u",
+	}
+	var flag int
+	r1, _ := c.SayHello2(context.Background(), &message2)
+	if r1 == nil {
+		Nodisponible2 = append(Nodisponible2, 1)
+	} else {
+		respuesta1, _ = c.ConsultarRA(context.Background(), &auxiliar)
 
-	fmt.Printf("Respuesta1: %s\n", respuesta1.Body)
-	fmt.Printf("Respuesta2: %s\n", respuesta2.Body)
-	fmt.Printf("Respuesta3: %s\n", respuesta3.Body)
-
-	for {
-		fmt.Printf("XD\n")
-		if respuesta1.Body == "0" && respuesta2.Body == "0" && respuesta3.Body == "0" {
-			auxiliar.Body = "1"
-			switch propuesta.Chosendn {
-			case "1":
-				c.CambiarRA(context.Background(), &auxiliar)
-			case "2":
-				c2.CambiarRA(context.Background(), &auxiliar)
-			case "3":
-				c3.CambiarRA(context.Background(), &auxiliar)
-			}
-			var conn4 *grpc.ClientConn
-			conn4, err4 := grpc.Dial(":9004", grpc.WithInsecure())
-			if err4 != nil {
-				log.Fatalf("uwu %s", err)
-			}
-			c4 := NewChatServiceClient(conn4)
-
-			defer conn.Close()
-
-			s.mu.Lock()
-			c4.HelperEscribirPropuesta(context.Background(), propuesta)
-			s.mu.Unlock()
-
-			auxiliar.Body = "0"
-			switch propuesta.Chosendn {
-			case "1":
-				c.CambiarRA(context.Background(), &auxiliar)
-			case "2":
-				c2.CambiarRA(context.Background(), &auxiliar)
-			case "3":
-				c3.CambiarRA(context.Background(), &auxiliar)
-			}
-			break
+	}
+	r, _ := c2.SayHello2(context.Background(), &message2)
+	if r == nil {
+		Nodisponible2 = append(Nodisponible2, 2)
+	} else {
+		Sidisponible2 = append(Sidisponible2, 2)
+		respuesta2, _ = c2.ConsultarRA(context.Background(), &auxiliar)
+		flag = 1
+	}
+	r2, _ := c3.SayHello2(context.Background(), &message2)
+	if r2 == nil {
+		Nodisponible2 = append(Nodisponible2, 3)
+	} else {
+		Sidisponible2 = append(Sidisponible2, 3)
+		respuesta3, _ = c3.ConsultarRA(context.Background(), &auxiliar)
+		if flag == 1 {
+			flag = 2
 		} else {
-			time.Sleep(2 * time.Second)
+			flag = 0
+		}
+	}
+	if len(Sidisponible2) == 2 && flag == 2 {
+		for {
+			if respuesta1.Body == "0" && respuesta2.Body == "0" && respuesta3.Body == "0" {
+				fmt.Printf("XD\n")
+				auxiliar.Body = "1"
+				switch propuesta.Chosendn {
+				case "1":
+					c.CambiarRA(context.Background(), &auxiliar)
+				case "2":
+					c2.CambiarRA(context.Background(), &auxiliar)
+				case "3":
+					c3.CambiarRA(context.Background(), &auxiliar)
+				}
+				var conn4 *grpc.ClientConn
+				conn4, err4 := grpc.Dial(":9004", grpc.WithInsecure())
+				if err4 != nil {
+					log.Fatalf("uwu %s", err)
+				}
+				c4 := NewChatServiceClient(conn4)
+
+				defer conn.Close()
+
+				s.mu.Lock()
+				c4.HelperEscribirPropuesta(context.Background(), propuesta)
+				s.mu.Unlock()
+
+				auxiliar.Body = "0"
+				switch propuesta.Chosendn {
+				case "1":
+					c.CambiarRA(context.Background(), &auxiliar)
+				case "2":
+					c2.CambiarRA(context.Background(), &auxiliar)
+				case "3":
+					c3.CambiarRA(context.Background(), &auxiliar)
+				}
+				break
+			} else {
+				time.Sleep(2 * time.Second)
+			}
+		}
+	}
+	if len(Sidisponible2) == 1 && flag == 1 {
+		for {
+			if respuesta1.Body == "0" && respuesta2.Body == "0" {
+				fmt.Printf("XD\n")
+				auxiliar.Body = "1"
+				switch propuesta.Chosendn {
+				case "1":
+					c.CambiarRA(context.Background(), &auxiliar)
+				case "2":
+					c2.CambiarRA(context.Background(), &auxiliar)
+				}
+				var conn4 *grpc.ClientConn
+				conn4, err4 := grpc.Dial(":9004", grpc.WithInsecure())
+				if err4 != nil {
+					log.Fatalf("uwu %s", err)
+				}
+				c4 := NewChatServiceClient(conn4)
+
+				defer conn.Close()
+
+				s.mu.Lock()
+				c4.HelperEscribirPropuesta(context.Background(), propuesta)
+				s.mu.Unlock()
+
+				auxiliar.Body = "0"
+				switch propuesta.Chosendn {
+				case "1":
+					c.CambiarRA(context.Background(), &auxiliar)
+				case "2":
+					c2.CambiarRA(context.Background(), &auxiliar)
+				}
+				break
+			} else {
+				time.Sleep(2 * time.Second)
+			}
+		}
+	}
+	if len(Sidisponible2) == 1 && flag == 0 {
+		for {
+			if respuesta1.Body == "0" && respuesta3.Body == "0" {
+				fmt.Printf("XD\n")
+				auxiliar.Body = "1"
+				switch propuesta.Chosendn {
+				case "1":
+					c.CambiarRA(context.Background(), &auxiliar)
+				case "3":
+					c3.CambiarRA(context.Background(), &auxiliar)
+				}
+				var conn4 *grpc.ClientConn
+				conn4, err4 := grpc.Dial(":9004", grpc.WithInsecure())
+				if err4 != nil {
+					log.Fatalf("uwu %s", err)
+				}
+				c4 := NewChatServiceClient(conn4)
+
+				defer conn.Close()
+
+				s.mu.Lock()
+				c4.HelperEscribirPropuesta(context.Background(), propuesta)
+				s.mu.Unlock()
+
+				auxiliar.Body = "0"
+				switch propuesta.Chosendn {
+				case "1":
+					c.CambiarRA(context.Background(), &auxiliar)
+				case "3":
+					c3.CambiarRA(context.Background(), &auxiliar)
+				}
+				break
+			} else {
+				time.Sleep(2 * time.Second)
+			}
 		}
 	}
 
