@@ -55,7 +55,7 @@ func main() {
 		os.Exit(1)
 	}
 	go con()
-	lis, err := net.Listen("tcp", ":9004")
+	lis, err := net.Listen("tcp", "dist28:9004")
 	if err != nil {
 		log.Fatalf("Failed to listen: %v", err)
 	}
