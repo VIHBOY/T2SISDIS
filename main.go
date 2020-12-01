@@ -18,6 +18,8 @@ import (
 )
 
 func con() {
+	var iniciar chat.Message
+	iniciar.Body = "0"
 	lis, err := net.Listen("tcp", "dist25:9000")
 	if err != nil {
 		log.Fatalf("Failed to listen: %v", err)
@@ -25,16 +27,12 @@ func con() {
 
 	s := chat.Server{}
 	grpcServer := grpc.NewServer()
+	s.CambiarRA(context.Background(), &iniciar)
 
 	chat.RegisterChatServiceServer(grpcServer, &s)
 	if err := grpcServer.Serve(lis); err != nil {
 		log.Fatalf("a %v", err)
 	}
-
-	var iniciar chat.Message
-	iniciar.Body = "0"
-
-	s.CambiarRA(context.Background(), &iniciar)
 
 }
 func do3(text string, c chat.ChatServiceClient, c2 chat.ChatServiceClient, c3 chat.ChatServiceClient) {
