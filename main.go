@@ -31,6 +31,11 @@ func con() {
 		log.Fatalf("a %v", err)
 	}
 
+	var iniciar chat.Message
+	iniciar.Body = "0"
+
+	s.CambiarRA(context.Background(), &iniciar)
+
 }
 func do3(text string, c chat.ChatServiceClient, c2 chat.ChatServiceClient, c3 chat.ChatServiceClient) {
 
@@ -515,7 +520,6 @@ func main() {
 		log.Fatalf("uwu %s", err2)
 	}
 	c2 := chat.NewChatServiceClient(conn2)
-	c2.CambiarRA(context.Background(), &iniciar)
 
 	defer conn2.Close()
 
@@ -526,7 +530,6 @@ func main() {
 		log.Fatalf("uwu %s", err)
 	}
 	c := chat.NewChatServiceClient(conn)
-	c.CambiarRA(context.Background(), &iniciar)
 
 	defer conn.Close()
 
@@ -538,7 +541,6 @@ func main() {
 		log.Fatalf("uwu %s", err3)
 	}
 	c3 := chat.NewChatServiceClient(conn3)
-	c3.CambiarRA(context.Background(), &iniciar)
 
 	defer conn3.Close()
 	for {

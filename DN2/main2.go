@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"log"
 	"net"
 
@@ -21,6 +22,11 @@ func con() {
 	if err := grpcServer.Serve(lis); err != nil {
 		log.Fatalf("a %v", err)
 	}
+
+	var iniciar chat.Message
+	iniciar.Body = "0"
+
+	s.CambiarRA(context.Background(), &iniciar)
 }
 
 func main() {
