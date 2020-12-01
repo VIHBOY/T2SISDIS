@@ -1487,7 +1487,6 @@ func (s *Server) PedirConfirmacionNM(ctx context.Context, message *Propuesta) (*
 ***/
 func (s *Server) CambiarRA(ctx context.Context, message *Message) (*Message, error) {
 	s.ra = message.Body
-	fmt.Println(message.Body)
 	return &Message{Body: message.Body}, nil
 }
 
